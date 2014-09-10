@@ -1,0 +1,38 @@
+if(APPLE)
+  cmake_minimum_required(VERSION 2.8.12.2 FATAL_ERROR)
+else()
+  cmake_minimum_required(VERSION 2.8.12.1 FATAL_ERROR)
+endif()
+
+project("port_project")
+
+function(ms_underscores_to_camel_case VarIn VarOut)
+  string(REPLACE "_" ";" Pieces ${VarIn})
+  foreach(Part ${Pieces})
+    string(SUBSTRING ${Part} 0 1 Initial)
+    string(SUBSTRING ${Part} 1 -1 Part)
+    string(TOUPPER ${Initial} Initial)
+    set(CamelCase ${CamelCase}${Initial}${Part})
+  endforeach()
+  set(${VarOut} ${CamelCase} PARENT_SCOPE)
+endfunction()
+
+function(apply_target_properties Target)
+  if(ARGV1)
+    set(Folder "${ARGV1}")
+  endif()
+  ms_underscores_to_camel_case(${Target} CamelCaseTargetName)
+  set_target_properties(${Target} PROPERTIES PROJECT_LABEL ${CamelCaseTargetName} FOLDER "${Folder}")
+endfunction()
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_DEBUG_POSTFIX -d)
+
+add_library(sample_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
+ms_underscores_to_camel_case(sample_lib CamelCaseLibraryName)
+set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
+
+add_executable(sample_app "${CMAKE_SOURCE_DIR}/main.cc")
+target_link_libraries(sample_app sample_lib)
+ms_underscores_to_camel_case(sample_app CamelCaseAppName)
+set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
