@@ -27,12 +27,18 @@ endfunction()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_DEBUG_POSTFIX -d)
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_library(sample_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
 ms_underscores_to_camel_case(sample_lib CamelCaseLibraryName)
 set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
 
 add_executable(sample_app "${CMAKE_SOURCE_DIR}/main.cc")
-target_link_libraries(sample_app sample_lib)
+
+if(UNIX)
+  target_link_libraries(sample_app sample_lib -pthread)
+else()
+  target_link_libraries(sample_app sample_lib)
+endif()
+
 ms_underscores_to_camel_case(sample_app CamelCaseAppName)
 set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")

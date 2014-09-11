@@ -2,7 +2,7 @@
 
 #include "api.h"
 
-void main() {
+int main() {
   std::cout << "Using SampleLib Functions:\n\n";
   auto client(sample_lib::TestClass::FactoryFunction());
   std::cout << "TestClass::kPublicStaticNumber:\t" << client->kPublicStaticNumber << '\n';
@@ -41,4 +41,5 @@ void main() {
   std::cout << '\n';
 
   std::cout << "Done...\n\n";
+  return 0;
 }

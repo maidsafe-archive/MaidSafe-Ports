@@ -35,7 +35,7 @@ void TestClass::ThrowCustomError() {
 }
 
 void TestClass::ThrowStdError() {
-  throw std::exception("catch me plsssss");
+  throw std::runtime_error("catch me plsssss");
 }
 
 std::shared_ptr<int> TestClass::GetSharedPtr() {
