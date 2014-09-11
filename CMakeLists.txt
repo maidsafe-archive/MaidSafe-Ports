@@ -34,7 +34,7 @@ set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName
 
 add_executable(sample_app "${CMAKE_SOURCE_DIR}/main.cc")
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   target_link_libraries(sample_app sample_lib -pthread)
 else()
   target_link_libraries(sample_app sample_lib)
