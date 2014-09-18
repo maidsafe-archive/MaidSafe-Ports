@@ -43,8 +43,19 @@ endif()
 ms_underscores_to_camel_case(sample_app CamelCaseAppName)
 set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
 
-
-
 set(ModuleName "port_sample")
+execute_process(COMMAND python -c "import os.path; print os.path.relpath('${CMAKE_SOURCE_DIR}', '${CMAKE_BINARY_DIR}/nodejs_binding').replace('\\\\', '/')"
+                RESULT_VARIABLE ResVar OUTPUT_VARIABLE RelPathToSourceDir ERROR_VARIABLE ErrorVar)
+if(NOT "${ResVar}" EQUAL 0)
+  message(FATAL_ERROR "Failed to calculate Rel Path to Source Dir: ${ErrorVar}")
+endif()
+
+string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
+
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs_binding/interface.i")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs_binding/binding.gyp")
+
+add_custom_target(nodejs_port
+                    COMMAND swig -c++ -javascript -node interface.i
+                    COMMAND node-gyp configure build
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding")
