@@ -59,3 +59,5 @@ add_custom_target(nodejs_port
                     COMMAND swig -c++ -javascript -node interface.i
                     COMMAND node-gyp configure build
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding")
+ms_underscores_to_camel_case(nodejs_port CamelCaseNodePort)
+set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Other Languages")
