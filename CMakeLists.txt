@@ -42,3 +42,9 @@ endif()
 
 ms_underscores_to_camel_case(sample_app CamelCaseAppName)
 set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
+
+
+
+set(ModuleName "port_sample")
+configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs_binding/interface.i")
+configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs_binding/binding.gyp")

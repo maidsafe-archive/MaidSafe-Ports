@@ -18,18 +18,27 @@ class TestClass {
 
   ~TestClass() = default;
 
-  const static int kPublicStaticNumber = 99;
+//  const static int kPublicStaticNumber = 99;
+  static const int kPublicStaticNumber = 99;
 
-  static std::unique_ptr<TestClass> FactoryFunction();
+//  static std::unique_ptr<TestClass> FactoryFunction();
+
+  static TestClass* RawFactoryFunction();
+
   std::string PrintMe();
   const int GetStaticConstValue();
   void SetMyValue(int number);
   int GetMyValue();
-  std::future<int> GetMyFutureValue();
+
+//  std::future<int> GetMyFutureValue();
+
   void ThrowCustomError();
   void ThrowStdError();
+
   std::shared_ptr<int> GetSharedPtr();
-  std::unique_ptr<int> GetUniquePtr();
+
+//  std::unique_ptr<int> GetUniquePtr();
+
   void SetCallback(std::function<void(int)> callback);
   void InvokeCallback();
 
@@ -43,7 +52,8 @@ class TestClass {
 
   int answer_;
   std::function<void(int)> callback_;
-  const static int kStaticNumber = 42;
+//  const static int kStaticNumber = 42;
+  static const int kStaticNumber = 42;
 };
 
 }

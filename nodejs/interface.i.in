@@ -1,0 +1,7 @@
+%module @ModuleName@
+%{
+#include "@CMAKE_SOURCE_DIR@/api.h"
+%}
+
+%include "@CMAKE_SOURCE_DIR@/api.h"
+

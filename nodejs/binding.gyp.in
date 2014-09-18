@@ -1,0 +1,9 @@
+{
+  "targets": [
+    {
+      "target_name": "@ModuleName@",
+      "sources": [ "api.cc", "interface_wrap.cxx" ]
+    }
+  ]
+}
+
