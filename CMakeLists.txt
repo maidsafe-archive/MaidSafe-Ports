@@ -52,20 +52,42 @@ endif()
 
 string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
-configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs_binding/interface.i")
-configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs_binding/binding.gyp")
+#-------------Nodejs Targets---------------
+
+configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")
+configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs/binding.gyp")
 
 add_custom_target(nodejs_port
                     COMMAND swig -c++ -javascript -node interface.i
                     COMMAND node-gyp configure build
-                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding")
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs")
 ms_underscores_to_camel_case(nodejs_port CamelCaseNodePort)
-set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
+set_target_properties(nodejs_port PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
 
 add_custom_target(nodejs_sample
-                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs_binding/build/Release"
+                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs/build/Release"
                     COMMAND node sample.js
                     DEPENDS nodejs_port
-                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding/build/Release")
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs/build/Release")
 ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
-set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodeSample} FOLDER "Port Samples")
+set_target_properties(nodejs_sample PROPERTIES PROJECT_LABEL ${CamelCaseNodeSample} FOLDER "Port Samples")
+
+#-------------Python Targets---------------
+
+configure_file("${CMAKE_SOURCE_DIR}/python/interface.i.in" "${CMAKE_BINARY_DIR}/python/interface.i")
+
+add_custom_target(python_port
+                    COMMAND swig -c++ -python interface.i
+                    COMMAND g++ -std=c++11 -c -fpic ${RelPathToSourceDir}/api.cc interface_wrap.cxx -I/usr/include/python2.7
+                    COMMAND g++ -shared api.o interface_wrap.o -o _${ModuleName}.so
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python")
+ms_underscores_to_camel_case(python_port CamelCasePythonPort)
+set_target_properties(python_port PROPERTIES PROJECT_LABEL ${CamelCasePythonPort} FOLDER "Port Libs")
+
+add_custom_target(python_sample
+                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/python/sample.py" "${CMAKE_BINARY_DIR}/python/"
+                    COMMAND python sample.py
+                    DEPENDS python_port
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python/")
+ms_underscores_to_camel_case(python_sample CamelCasePythonSample)
+set_target_properties(python_sample PROPERTIES PROJECT_LABEL ${CamelCasePythonSample} FOLDER "Port Samples")

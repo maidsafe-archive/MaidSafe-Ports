@@ -9,6 +9,6 @@ console.log('Random Int: ' + randomInt);
 console.log('Passing var to C++');
 testClassObject.SetMyValue(randomInt);
 
-console.log('Getting var from C++');
-console.log(testClassObject.GetMyValue());
+console.log('Getting var from C++: ' + testClassObject.GetMyValue());
+console.log('Getting Static var from C++: ' + testClassObject.GetStaticConstValue());
 console.log('\nDone...');
