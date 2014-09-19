@@ -27,7 +27,11 @@ endfunction()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_DEBUG_POSTFIX -d)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+if(UNIX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 add_library(sample_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
 ms_underscores_to_camel_case(sample_lib CamelCaseLibraryName)
 set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
@@ -43,7 +47,7 @@ endif()
 ms_underscores_to_camel_case(sample_app CamelCaseAppName)
 set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
 
-set(ModuleName "port_sample")
+
 execute_process(COMMAND python -c "import os.path; print os.path.relpath('${CMAKE_SOURCE_DIR}', '${CMAKE_BINARY_DIR}/nodejs_binding').replace('\\\\', '/')"
                 RESULT_VARIABLE ResVar OUTPUT_VARIABLE RelPathToSourceDir ERROR_VARIABLE ErrorVar)
 if(NOT "${ResVar}" EQUAL 0)
@@ -53,7 +57,7 @@ endif()
 string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
 #-------------Nodejs Targets---------------
-
+set(ModuleName "nodejs_port")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs/binding.gyp")
 
@@ -73,21 +77,32 @@ ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
 set_target_properties(nodejs_sample PROPERTIES PROJECT_LABEL ${CamelCaseNodeSample} FOLDER "Port Samples")
 
 #-------------Python Targets---------------
-
+set(ModuleName "python_port")
 configure_file("${CMAKE_SOURCE_DIR}/python/interface.i.in" "${CMAKE_BINARY_DIR}/python/interface.i")
 
-add_custom_target(python_port
-                    COMMAND swig -c++ -python interface.i
-                    COMMAND g++ -std=c++11 -c -fpic ${RelPathToSourceDir}/api.cc interface_wrap.cxx -I/usr/include/python2.7
-                    COMMAND g++ -shared api.o interface_wrap.o -o _${ModuleName}.so
-                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python")
-ms_underscores_to_camel_case(python_port CamelCasePythonPort)
-set_target_properties(python_port PROPERTIES PROJECT_LABEL ${CamelCasePythonPort} FOLDER "Port Libs")
+set(PythonInterfaceFile "${CMAKE_BINARY_DIR}/python/interface_wrap.cxx")
+add_custom_command(OUTPUT ${PythonInterfaceFile} COMMAND swig -c++ -python interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python")
+
+add_library(_${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${PythonInterfaceFile})
+if(UNIX)
+  target_compile_options(_${ModuleName} PRIVATE -std=c++11 -fpic)
+  target_include_directories(_${ModuleName} PRIVATE "/usr/include/python2.7")
+  set_target_properties(_${ModuleName} PROPERTIES PREFIX "")
+else()
+  # switch this to find_python
+  target_include_directories(_${ModuleName} PRIVATE "C:/Python27/include")
+  target_link_libraries(_${ModuleName} "C:/Python27/libs/python27.lib")
+endif()
+
+add_custom_command(TARGET _${ModuleName} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:_${ModuleName}> "${CMAKE_BINARY_DIR}/python/")
+ms_underscores_to_camel_case(_${ModuleName} CamelCasePythonPort)
+set_target_properties(_${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCasePythonPort} FOLDER "Port Libs")
 
 add_custom_target(python_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/python/sample.py" "${CMAKE_BINARY_DIR}/python/"
                     COMMAND python sample.py
-                    DEPENDS python_port
+                    DEPENDS _${ModuleName}
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python/")
 ms_underscores_to_camel_case(python_sample CamelCasePythonSample)
 set_target_properties(python_sample PROPERTIES PROJECT_LABEL ${CamelCasePythonSample} FOLDER "Port Samples")

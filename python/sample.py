@@ -1,7 +1,7 @@
-import port_sample
+import python_port
 import random
 
-testClassObject = port_sample.TestClass.RawFactoryFunction()
+testClassObject = python_port.TestClass.RawFactoryFunction()
 randomInt = random.randint(1, 1000)
 print "{} {}".format("Random Int:", randomInt)
 print "Passing var to C++"

@@ -1,6 +1,6 @@
-var portSample = require('./port_sample');
+var nodejsPort = require('./nodejs_port');
 
-var testClassObject = portSample.TestClass.RawFactoryFunction();
+var testClassObject = nodejsPort.TestClass.RawFactoryFunction();
 
 var randomInt = Math.round((Math.random() * (1000 - 1)) + 1);
 
