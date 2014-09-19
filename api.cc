@@ -3,17 +3,10 @@
 namespace sample_lib {
 
 TestClass::TestClass()
-  : answer_(98),
-    callback_() {}
+  : answer_(98) {}
 
-//std::unique_ptr<TestClass> TestClass::FactoryFunction() {
-//  return std::unique_ptr<TestClass>(new TestClass());
-//}
-
-/*static*/ TestClass* TestClass::RawFactoryFunction() {return new TestClass;}
-
-std::string TestClass::PrintMe() {
-  return "You should see me";
+TestClass* TestClass::RawFactoryFunction() {
+  return new TestClass{};
 }
 
 const int TestClass::GetStaticConstValue() {
@@ -28,9 +21,22 @@ int TestClass::GetMyValue() {
   return answer_;
 }
 
-//std::future<int> TestClass::GetMyFutureValue() {
-//  return std::async(std::launch::async, [this]() { return this->answer_; });
-//}
+/*
+TestClass::TestClass()
+  : answer_(98),
+    callback_() {}
+
+std::unique_ptr<TestClass> TestClass::FactoryFunction() {
+  return std::unique_ptr<TestClass>(new TestClass());
+}
+
+std::string TestClass::PrintMe() {
+  return "You should see me";
+}
+
+std::future<int> TestClass::GetMyFutureValue() {
+  return std::async(std::launch::async, [this]() { return this->answer_; });
+}
 
 void TestClass::ThrowCustomError() {
   throw CustomError();
@@ -44,9 +50,9 @@ std::shared_ptr<int> TestClass::GetSharedPtr() {
   return std::make_shared<int>(answer_);
 }
 
-//std::unique_ptr<int> TestClass::GetUniquePtr() {
-//  return std::unique_ptr<int>(new int(4500));
-//}
+std::unique_ptr<int> TestClass::GetUniquePtr() {
+  return std::unique_ptr<int>(new int(4500));
+}
 
 void TestClass::SetCallback(std::function<void(int)> callback) {
   callback_ = callback;
@@ -55,5 +61,6 @@ void TestClass::SetCallback(std::function<void(int)> callback) {
 void TestClass::InvokeCallback() {
   callback_(200);
 }
+*/
 
 }

@@ -18,26 +18,27 @@ class TestClass {
 
   ~TestClass() = default;
 
-//  const static int kPublicStaticNumber = 99;
-  static const int kPublicStaticNumber = 99;
-
-//  static std::unique_ptr<TestClass> FactoryFunction();
-
   static TestClass* RawFactoryFunction();
-
-  std::string PrintMe();
   const int GetStaticConstValue();
   void SetMyValue(int number);
   int GetMyValue();
+  static const int kPublicStaticNumber = 99;
 
-//  std::future<int> GetMyFutureValue();
+  /*
+  const static int kPublicStaticNumber = 99;
+
+  static std::unique_ptr<TestClass> FactoryFunction();
+
+  std::string PrintMe();
+
+  std::future<int> GetMyFutureValue();
 
   void ThrowCustomError();
   void ThrowStdError();
 
   std::shared_ptr<int> GetSharedPtr();
 
-//  std::unique_ptr<int> GetUniquePtr();
+  std::unique_ptr<int> GetUniquePtr();
 
   void SetCallback(std::function<void(int)> callback);
   void InvokeCallback();
@@ -46,14 +47,18 @@ class TestClass {
   U GetTemplateValue(U x) {
     return x;
   }
+  */
 
  private:
   TestClass();
 
   int answer_;
-  std::function<void(int)> callback_;
-//  const static int kStaticNumber = 42;
   static const int kStaticNumber = 42;
+
+  /*
+  std::function<void(int)> callback_;
+  const static int kStaticNumber = 42;
+  */
 };
 
 }

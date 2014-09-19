@@ -2,7 +2,8 @@
   "targets": [
     {
       "target_name": "@ModuleName@",
-      "sources": [ "@RelPathToSourceDir@/api.cc", "interface_wrap.cxx" ]
+      "sources": [ "@RelPathToSourceDir@/api.cc", "interface_wrap.cxx" ],
+      "cflags_cc": ["-std=c++11", "-fexceptions"]
     }
   ]
 }
