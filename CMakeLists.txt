@@ -60,4 +60,12 @@ add_custom_target(nodejs_port
                     COMMAND node-gyp configure build
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding")
 ms_underscores_to_camel_case(nodejs_port CamelCaseNodePort)
-set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Other Languages")
+set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
+
+add_custom_target(nodejs_sample
+                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs_binding/build/Release"
+                    COMMAND node sample.js
+                    DEPENDS nodejs_port
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs_binding/build/Release")
+ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
+set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseNodeSample} FOLDER "Port Samples")
