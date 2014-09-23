@@ -7,5 +7,5 @@ print "{} {}".format("Random Int:", randomInt)
 print "Passing var to C++"
 testClassObject.SetMyValue(randomInt)
 print "{} {}".format("Getting var from C++:", testClassObject.GetMyValue())
-print "{} {}".format("Getting Static const from C++:", testClassObject.GetStaticConstValue())
+print "{} {}".format("Getting Random UInt from MS-Common>utils.h: ", testClassObject.GetRandomUInt32())
 print "\nDone..."

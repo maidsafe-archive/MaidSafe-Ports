@@ -25,6 +25,20 @@ function(apply_target_properties Target)
   set_target_properties(${Target} PROPERTIES PROJECT_LABEL ${CamelCaseTargetName} FOLDER "${Folder}")
 endfunction()
 
+# Including maidsafe_export.cmake brings all the MaidSafe libraries into scope as CMake targets.
+find_file(MaidSafeExport NAMES maidsafe_export.cmake
+                         PATHS ${MAIDSAFE_BINARY_DIR}
+                         NO_DEFAULT_PATH)
+if(NOT MaidSafeExport)
+  set(ErrorMessage "\n\nCan't find maidsafe_export.cmake in MAIDSAFE_BINARY_DIR.  ")
+  set(ErrorMessage "${ErrorMessage}Currently MAIDSAFE_BINARY_DIR is set to ")
+  set(ErrorMessage "${ErrorMessage}\"${MAIDSAFE_BINARY_DIR}\"  It must be set to the MaidSafe ")
+  set(ErrorMessage "${ErrorMessage}super-project's build root.\nTo set it, run:\n")
+  set(ErrorMessage "${ErrorMessage}    cmake . -DMAIDSAFE_BINARY_DIR=\"<path to build root>\"\n\n")
+  message(FATAL_ERROR "${ErrorMessage}")
+endif()
+include(${MaidSafeExport})
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_DEBUG_POSTFIX -d)
 
@@ -33,6 +47,12 @@ if(UNIX)
 endif()
 
 add_library(sample_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
+target_link_libraries(sample_lib maidsafe_common)
+
+if(UNIX)
+  target_compile_options(sample_lib PRIVATE -std=c++11 -fpic)
+endif()
+
 ms_underscores_to_camel_case(sample_lib CamelCaseLibraryName)
 set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
 
@@ -73,6 +93,7 @@ add_custom_target(nodejs_sample
                     COMMAND node sample.js
                     DEPENDS nodejs_port
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs/build/Release")
+
 ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
 set_target_properties(nodejs_sample PROPERTIES PROJECT_LABEL ${CamelCaseNodeSample} FOLDER "Port Samples")
 
@@ -84,6 +105,8 @@ set(PythonInterfaceFile "${CMAKE_BINARY_DIR}/python/interface_wrap.cxx")
 add_custom_command(OUTPUT ${PythonInterfaceFile} COMMAND swig -c++ -python interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python")
 
 add_library(_${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${PythonInterfaceFile})
+target_link_libraries(_${ModuleName} sample_lib)
+
 if(UNIX)
   target_compile_options(_${ModuleName} PRIVATE -std=c++11 -fpic)
   target_include_directories(_${ModuleName} PRIVATE "/usr/include/python2.7")

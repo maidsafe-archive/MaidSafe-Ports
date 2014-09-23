@@ -19,12 +19,15 @@ class TestClass {
   ~TestClass() = default;
 
   static TestClass* RawFactoryFunction();
-  const int GetStaticConstValue();
   void SetMyValue(int number);
   int GetMyValue();
-  static const int kPublicStaticNumber = 99;
+
+  int GetRandomUInt32();
 
   /*
+  const int GetStaticConstValue();
+
+  static const int kPublicStaticNumber = 99;
   const static int kPublicStaticNumber = 99;
 
   static std::unique_ptr<TestClass> FactoryFunction();

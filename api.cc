@@ -1,5 +1,7 @@
 #include "api.h"
 
+#include "maidsafe/common/utils.h"
+
 namespace sample_lib {
 
 TestClass::TestClass()
@@ -7,10 +9,6 @@ TestClass::TestClass()
 
 TestClass* TestClass::RawFactoryFunction() {
   return new TestClass{};
-}
-
-const int TestClass::GetStaticConstValue() {
-  return kStaticNumber;
 }
 
 void TestClass::SetMyValue(int number) {
@@ -21,7 +19,16 @@ int TestClass::GetMyValue() {
   return answer_;
 }
 
+int TestClass::GetRandomUInt32() {
+  return maidsafe::RandomUint32() % 1000;
+}
+
 /*
+
+const int TestClass::GetStaticConstValue() {
+  return kStaticNumber;
+}
+
 TestClass::TestClass()
   : answer_(98),
     callback_() {}

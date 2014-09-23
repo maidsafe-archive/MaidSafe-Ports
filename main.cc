@@ -3,13 +3,23 @@
 
 int main() {
   std::cout << "Using SampleLib Functions:\n\n";
-  auto client(sample_lib::TestClass::FactoryFunction());
-  std::cout << "TestClass::kPublicStaticNumber:\t" << client->kPublicStaticNumber << '\n';
-  std::cout << "TestClass::PrintMe():\t" << client->PrintMe() << '\n';
-  std::cout << "TestClass::GetStaticConstValue():\t" << client->GetStaticConstValue() << '\n';
+
+  auto client(sample_lib::TestClass::RawFactoryFunction());
+  client->SetMyValue(500);
 
   std::cout << "TestClass::GetMyValue():\t" << client->GetMyValue() << '\n';
-  client->SetMyValue(500);
+
+  for (int i = 0; i < 10; ++i) {
+    std::cout << i + 1 << ") TestClass::GetRandomUInt32():\t" << client->GetRandomUInt32() << '\n';
+  }
+
+
+  /*
+  auto client(sample_lib::TestClass::FactoryFunction());
+
+  std::cout << "TestClass::kPublicStaticNumber:\t" << client->kPublicStaticNumber << '\n';
+  std::cout << "TestClass::GetStaticConstValue():\t" << client->GetStaticConstValue() << '\n';
+  std::cout << "TestClass::PrintMe():\t" << client->PrintMe() << '\n';
   std::cout << "TestClass::GetMyFutureValue():\t" << client->GetMyFutureValue().get() << '\n';
 
   try {
@@ -38,6 +48,7 @@ int main() {
   std::cout << "TestClass::InvokeCallback():\t";
   client->InvokeCallback();
   std::cout << '\n';
+  */
 
   std::cout << "Done...\n\n";
   return 0;
