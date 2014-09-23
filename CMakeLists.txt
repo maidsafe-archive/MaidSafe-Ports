@@ -6,78 +6,8 @@ endif()
 
 project("port_project")
 
-#####################################################################################################
-
-function(ms_underscores_to_camel_case VarIn VarOut)
-  string(REPLACE "_" ";" Pieces ${VarIn})
-  foreach(Part ${Pieces})
-    string(SUBSTRING ${Part} 0 1 Initial)
-    string(SUBSTRING ${Part} 1 -1 Part)
-    string(TOUPPER ${Initial} Initial)
-    set(CamelCase ${CamelCase}${Initial}${Part})
-  endforeach()
-  set(${VarOut} ${CamelCase} PARENT_SCOPE)
-endfunction()
-
-function(apply_target_properties Target)
-  if(ARGV1)
-    set(Folder "${ARGV1}")
-  endif()
-  ms_underscores_to_camel_case(${Target} CamelCaseTargetName)
-  set_target_properties(${Target} PROPERTIES PROJECT_LABEL ${CamelCaseTargetName} FOLDER "${Folder}")
-endfunction()
-
-function(get_header_paths Target HeaderPaths LibPaths)
-  get_target_property(IncludeDirs ${Target} INTERFACE_INCLUDE_DIRECTORIES)
-  get_target_property(LibPath ${Target} IMPORTED_LOCATION_RELEASE)
-  get_target_property(CurrentLibs ${Target} INTERFACE_LINK_LIBRARIES)
-  if(CurrentLibs)
-    foreach(CurrentLib ${CurrentLibs})
-      get_target_property(CurrentLibIncludeDirs ${CurrentLib} INTERFACE_INCLUDE_DIRECTORIES)
-      if(${CurrentLib} STREQUAL "maidsafe_passport")
-        set(IncludeDirs ${IncludeDirs} ${CurrentLibIncludeDirs})
-        get_target_property(PassportLibPath ${CurrentLib} IMPORTED_LOCATION_RELEASE)
-        set(LibPath ${LibPath} ${PassportLibPath})
-      elseif(CurrentLibIncludeDirs)
-        get_header_paths(${CurrentLib} ${HeaderPaths} ${LibPaths})
-      else()
-        if(UNIX)
-          get_target_property(CurrentLibPath ${CurrentLib} IMPORTED_LOCATION)
-        else()
-          get_target_property(CurrentLibPath ${CurrentLib} IMPORTED_LOCATION_RELEASE)
-        endif()
-
-        if(CurrentLibPath)
-          set(LibPath ${LibPath} ${CurrentLibPath})
-        endif()
-      endif()
-    endforeach()
-  endif()
-
-  if(${HeaderPaths})
-    set(${HeaderPaths} "${${HeaderPaths}};${IncludeDirs}" PARENT_SCOPE)
-  else()
-    set(${HeaderPaths} "${IncludeDirs}" PARENT_SCOPE)
-  endif()
-
-  if(${LibPaths})
-    set(${LibPaths} "${${LibPaths}};${LibPath}" PARENT_SCOPE)
-  else()
-    set(${LibPaths} "${LibPath}" PARENT_SCOPE)
-  endif()
-
-endfunction()
-
-function(format_list InList OutList)
-  set(FormattedList "")
-  foreach(InItem ${${InList}})
-    set(FormattedList "${FormattedList}\"${InItem}\", ")
-  endforeach()
-  string(REGEX REPLACE ", $" "" FormattedList ${FormattedList})
-  set(${OutList} ${FormattedList} PARENT_SCOPE)
-endfunction()
-
-#####################################################################################################
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules)
+include(port_utils)
 
 # Including maidsafe_export.cmake brings all the MaidSafe libraries into scope as CMake targets.
 find_file(MaidSafeExport NAMES maidsafe_export.cmake
@@ -123,27 +53,25 @@ endif()
 string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
 #-------------Nodejs Targets---------------
-
-get_header_paths(maidsafe_common CommonHeaders CommonLibs)
-
+set(ModuleName "nodejs_port")
+get_dependency_paths(maidsafe_common CommonHeaders CommonLibs)
 format_list(CommonHeaders FormattedHeaders)
 format_list(CommonLibs FormattedLibs)
 
-set(ModuleName "nodejs_port")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs/binding.gyp")
 
-add_custom_target(ModuleName
+add_custom_target(${ModuleName}
                     COMMAND swig -c++ -javascript -node interface.i
                     COMMAND node-gyp configure build
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs")
-ms_underscores_to_camel_case(ModuleName CamelCaseNodePort)
-set_target_properties(ModuleName PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
+ms_underscores_to_camel_case(${ModuleName} CamelCaseNodePort)
+set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
 
 add_custom_target(nodejs_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs/build/Release"
                     COMMAND node sample.js
-                    DEPENDS ModuleName
+                    DEPENDS ${ModuleName}
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs/build/Release")
 
 ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
