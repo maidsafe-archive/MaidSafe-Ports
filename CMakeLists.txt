@@ -6,6 +6,8 @@ endif()
 
 project("port_project")
 
+#####################################################################################################
+
 function(ms_underscores_to_camel_case VarIn VarOut)
   string(REPLACE "_" ";" Pieces ${VarIn})
   foreach(Part ${Pieces})
@@ -24,6 +26,43 @@ function(apply_target_properties Target)
   ms_underscores_to_camel_case(${Target} CamelCaseTargetName)
   set_target_properties(${Target} PROPERTIES PROJECT_LABEL ${CamelCaseTargetName} FOLDER "${Folder}")
 endfunction()
+
+function(get_header_paths Target HeaderPaths LibPaths)
+  get_target_property(IncludeDirs ${Target} INTERFACE_INCLUDE_DIRECTORIES)
+  get_target_property(LibPath ${Target} IMPORTED_LOCATION_RELEASE)
+  get_target_property(CurrentLibs ${Target} INTERFACE_LINK_LIBRARIES)
+  if(CurrentLibs)
+    foreach(CurrentLib ${CurrentLibs})
+      get_target_property(CurrentLibIncludeDirs ${CurrentLib} INTERFACE_INCLUDE_DIRECTORIES)
+      if(CurrentLibIncludeDirs AND NOT ${Target} STREQUAL "maidsafe_passport")
+        get_header_paths(${CurrentLib} ${HeaderPaths} ${LibPaths})
+      endif()
+    endforeach()
+  endif()
+
+  if(${HeaderPaths})
+    set(${HeaderPaths} "${${HeaderPaths}};${IncludeDirs}" PARENT_SCOPE)
+  else()
+    set(${HeaderPaths} "${IncludeDirs}" PARENT_SCOPE)
+  endif()
+
+  if(${LibPaths})
+    set(${LibPaths} "${${LibPaths}};${LibPath}" PARENT_SCOPE)
+  else()
+    set(${LibPaths} "${LibPath}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+function(format_list InList OutList)
+  set(FormattedList "")
+  foreach(InItem ${${InList}})
+    set(FormattedList "${FormattedList}\"${InItem}\", ")
+  endforeach()
+  string(REGEX REPLACE ", $" "" FormattedList ${FormattedList})
+  set(${OutList} ${FormattedList} PARENT_SCOPE)
+endfunction()
+
+#####################################################################################################
 
 # Including maidsafe_export.cmake brings all the MaidSafe libraries into scope as CMake targets.
 find_file(MaidSafeExport NAMES maidsafe_export.cmake
@@ -70,23 +109,10 @@ string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
 #-------------Nodejs Targets---------------
 
-function(get_header_paths Target HeaderPaths LibPaths)
-message(STATUS "${Target}")
-get_target_property(IncludeDirs ${Target} INTERFACE_INCLUDE_DIRECTORIES)
+get_header_paths(maidsafe_common CommonHeaders CommonLibs)
 
-get_target_property(CurrentLibs ${Target} INTERFACE_LINK_LIBRARIES)
-foreach(CurrentLib ${CurrentLibs})
-  get_target_property(CurrentLibIncludeDirs ${CurrentLib} INTERFACE_INCLUDE_DIRECTORIES)
-  if(CurrentLibIncludeDirs AND NOT ${Target} STREQUAL "maidsafe_passport")
-    get_header_paths(${CurrentLib} HeaderPaths LibPaths)
-  endif()
-endforeach()
-message(${IncludeDirs})
-set(${HeaderPaths} "${${HeaderPaths}};${IncludeDirs}" PARENT_SCOPE)
-endfunction()
-
-get_header_paths(maidsafe_common MyHeaders MyLibs)
-message(FATAL_ERROR "MyHeaders - ${MyHeaders}")
+format_list(CommonHeaders FormattedHeaders)
+format_list(CommonLibs FormattedLibs)
 
 set(ModuleName "nodejs_port")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")

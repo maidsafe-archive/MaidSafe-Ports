@@ -4,20 +4,11 @@
       "target_name": "@ModuleName@",
       "sources": [ "@RelPathToSourceDir@/api.cc", "interface_wrap.cxx" ],
       "include_dirs": [
-                         "/home/spandana/virtualization/karya/git/maidsafe/thirdParty/boost/boost_1_55_0_GNU_4_8_2",
-                         "/home/spandana/virtualization/karya/git/maidsafe/MaidSafe/src/common/include",
-                         "/home/spandana/virtualization/karya/git/maidsafe/MaidSafe/src/third_party_libs",
-                         "/home/spandana/virtualization/karya/git/maidsafe/MaidSafe/src/passport/include"
-                      ],
+        @FormattedHeaders@
+      ],
       "libraries": [
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libmaidsafe_common.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libcryptopp.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libmaidsafe_passport.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libprotobuf.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libprotobuf_lite.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libproto_compiler.a",
-                         "/home/spandana/virtualization/karya/git/maidsafe/build_release/libsqlite.a",
-                  ],
+        @FormattedLibs@
+      ],
       "cflags_cc": [ "-std=c++11", "-fexceptions", "-frtti" ],
       "defines": [ "APPLICATION_VERSION_MAJOR=1", "APPLICATION_VERSION_MINOR=0", "APPLICATION_VERSION_PATCH=1" ],
     }
