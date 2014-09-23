@@ -42,30 +42,22 @@ include(${MaidSafeExport})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_DEBUG_POSTFIX -d)
 
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
+add_library(wrapper_cpp_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
+target_link_libraries(wrapper_cpp_lib maidsafe_common)
 
-add_library(sample_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
-target_link_libraries(sample_lib maidsafe_common)
+ms_underscores_to_camel_case(wrapper_cpp_lib CamelCaseLibraryName)
+set_target_properties(wrapper_cpp_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
 
-if(UNIX)
-  target_compile_options(sample_lib PRIVATE -std=c++11 -fpic)
-endif()
-
-ms_underscores_to_camel_case(sample_lib CamelCaseLibraryName)
-set_target_properties(sample_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
-
-add_executable(sample_app "${CMAKE_SOURCE_DIR}/main.cc")
+add_executable(wrapper_app "${CMAKE_SOURCE_DIR}/main.cc")
 
 if(UNIX AND NOT APPLE)
-  target_link_libraries(sample_app sample_lib -pthread)
+  target_link_libraries(wrapper_app wrapper_cpp_lib -pthread)
 else()
-  target_link_libraries(sample_app sample_lib)
+  target_link_libraries(wrapper_app wrapper_cpp_lib)
 endif()
 
-ms_underscores_to_camel_case(sample_app CamelCaseAppName)
-set_target_properties(sample_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
+ms_underscores_to_camel_case(wrapper_app CamelCaseAppName)
+set_target_properties(wrapper_app PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Demo App")
 
 
 execute_process(COMMAND python -c "import os.path; print os.path.relpath('${CMAKE_SOURCE_DIR}', '${CMAKE_BINARY_DIR}/nodejs_binding').replace('\\\\', '/')"
@@ -77,21 +69,40 @@ endif()
 string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
 #-------------Nodejs Targets---------------
+
+function(get_header_paths Target HeaderPaths LibPaths)
+message(STATUS "${Target}")
+get_target_property(IncludeDirs ${Target} INTERFACE_INCLUDE_DIRECTORIES)
+
+get_target_property(CurrentLibs ${Target} INTERFACE_LINK_LIBRARIES)
+foreach(CurrentLib ${CurrentLibs})
+  get_target_property(CurrentLibIncludeDirs ${CurrentLib} INTERFACE_INCLUDE_DIRECTORIES)
+  if(CurrentLibIncludeDirs AND NOT ${Target} STREQUAL "maidsafe_passport")
+    get_header_paths(${CurrentLib} HeaderPaths LibPaths)
+  endif()
+endforeach()
+message(${IncludeDirs})
+set(${HeaderPaths} "${${HeaderPaths}};${IncludeDirs}" PARENT_SCOPE)
+endfunction()
+
+get_header_paths(maidsafe_common MyHeaders MyLibs)
+message(FATAL_ERROR "MyHeaders - ${MyHeaders}")
+
 set(ModuleName "nodejs_port")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs/binding.gyp")
 
-add_custom_target(nodejs_port
+add_custom_target(ModuleName
                     COMMAND swig -c++ -javascript -node interface.i
                     COMMAND node-gyp configure build
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs")
-ms_underscores_to_camel_case(nodejs_port CamelCaseNodePort)
-set_target_properties(nodejs_port PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
+ms_underscores_to_camel_case(ModuleName CamelCaseNodePort)
+set_target_properties(ModuleName PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
 
 add_custom_target(nodejs_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs/build/Release"
                     COMMAND node sample.js
-                    DEPENDS nodejs_port
+                    DEPENDS ModuleName
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs/build/Release")
 
 ms_underscores_to_camel_case(nodejs_sample CamelCaseNodeSample)
@@ -104,28 +115,28 @@ configure_file("${CMAKE_SOURCE_DIR}/python/interface.i.in" "${CMAKE_BINARY_DIR}/
 set(PythonInterfaceFile "${CMAKE_BINARY_DIR}/python/interface_wrap.cxx")
 add_custom_command(OUTPUT ${PythonInterfaceFile} COMMAND swig -c++ -python interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python")
 
-add_library(_${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${PythonInterfaceFile})
-target_link_libraries(_${ModuleName} sample_lib)
+add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${PythonInterfaceFile})
+target_link_libraries(${ModuleName} wrapper_cpp_lib)
+set_target_properties(${ModuleName} PROPERTIES PREFIX "_")
 
 if(UNIX)
-  target_compile_options(_${ModuleName} PRIVATE -std=c++11 -fpic)
-  target_include_directories(_${ModuleName} PRIVATE "/usr/include/python2.7")
-  set_target_properties(_${ModuleName} PROPERTIES PREFIX "")
+  target_include_directories(${ModuleName} PRIVATE "/usr/include/python2.7")
 else()
   # switch this to find_python
-  target_include_directories(_${ModuleName} PRIVATE "C:/Python27/include")
-  target_link_libraries(_${ModuleName} "C:/Python27/libs/python27.lib")
+  target_include_directories(${ModuleName} PRIVATE "C:/Python27/include")
+  target_link_libraries(${ModuleName} "C:/Python27/libs/python27.lib")
+  set_target_properties(${ModuleName} PROPERTIES SUFFIX ".pyd")
 endif()
 
-add_custom_command(TARGET _${ModuleName} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:_${ModuleName}> "${CMAKE_BINARY_DIR}/python/")
-ms_underscores_to_camel_case(_${ModuleName} CamelCasePythonPort)
-set_target_properties(_${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCasePythonPort} FOLDER "Port Libs")
+add_custom_command(TARGET ${ModuleName} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/python/")
+ms_underscores_to_camel_case(${ModuleName} CamelCasePythonPort)
+set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCasePythonPort} FOLDER "Port Libs")
 
 add_custom_target(python_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/python/sample.py" "${CMAKE_BINARY_DIR}/python/"
                     COMMAND python sample.py
-                    DEPENDS _${ModuleName}
+                    DEPENDS ${ModuleName}
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python/")
 ms_underscores_to_camel_case(python_sample CamelCasePythonSample)
 set_target_properties(python_sample PROPERTIES PROJECT_LABEL ${CamelCasePythonSample} FOLDER "Port Samples")
