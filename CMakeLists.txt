@@ -58,6 +58,9 @@ get_dependency_paths(maidsafe_common CommonHeaders CommonLibs)
 format_list(CommonHeaders FormattedHeaders)
 format_list(CommonLibs FormattedLibs)
 
+#:span- Just so that it gets listed in the IDE
+configure_file("${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_SOURCE_DIR}/nodejs/sample.js")
+
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/interface.i.in" "${CMAKE_BINARY_DIR}/nodejs/interface.i")
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/nodejs/binding.gyp")
 
@@ -79,6 +82,10 @@ set_target_properties(nodejs_sample PROPERTIES PROJECT_LABEL ${CamelCaseNodeSamp
 
 #-------------Python Targets---------------
 set(ModuleName "python_port")
+
+#:span- Just so that it gets listed in the IDE
+configure_file("${CMAKE_SOURCE_DIR}/python/sample.py" "${CMAKE_SOURCE_DIR}/python/sample.py")
+
 configure_file("${CMAKE_SOURCE_DIR}/python/interface.i.in" "${CMAKE_BINARY_DIR}/python/interface.i")
 
 set(PythonInterfaceFile "${CMAKE_BINARY_DIR}/python/interface_wrap.cxx")

@@ -3,5 +3,8 @@
 #include "@RelPathToSourceDir@/api.h"
 %}
 
+%include "std_string.i"
 %include "@RelPathToSourceDir@/api.h"
-
+%template(GetTemplateValueAsInt) sample_lib::TestClass::GetTemplateValue<int>;
+%template(GetTemplateValueAsChar) sample_lib::TestClass::GetTemplateValue<char>;
+%template(GetTemplateValueAsDouble) sample_lib::TestClass::GetTemplateValue<double>;

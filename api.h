@@ -24,6 +24,13 @@ class TestClass {
 
   int GetRandomUInt32();
 
+  template <typename U>
+  U GetTemplateValue(U x) {
+    return x;
+  }
+
+  std::string PrintMe();
+
   /*
   const int GetStaticConstValue();
 
@@ -31,8 +38,6 @@ class TestClass {
   const static int kPublicStaticNumber = 99;
 
   static std::unique_ptr<TestClass> FactoryFunction();
-
-  std::string PrintMe();
 
   std::future<int> GetMyFutureValue();
 
@@ -45,11 +50,6 @@ class TestClass {
 
   void SetCallback(std::function<void(int)> callback);
   void InvokeCallback();
-
-  template <typename U>
-  U GetTemplateValue(U x) {
-    return x;
-  }
   */
 
  private:

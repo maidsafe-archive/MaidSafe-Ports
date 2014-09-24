@@ -23,8 +23,11 @@ int TestClass::GetRandomUInt32() {
   return maidsafe::RandomUint32() % 1000;
 }
 
-/*
+std::string TestClass::PrintMe() {
+  return "You should see me";
+}
 
+/*
 const int TestClass::GetStaticConstValue() {
   return kStaticNumber;
 }
@@ -35,10 +38,6 @@ TestClass::TestClass()
 
 std::unique_ptr<TestClass> TestClass::FactoryFunction() {
   return std::unique_ptr<TestClass>(new TestClass());
-}
-
-std::string TestClass::PrintMe() {
-  return "You should see me";
 }
 
 std::future<int> TestClass::GetMyFutureValue() {
