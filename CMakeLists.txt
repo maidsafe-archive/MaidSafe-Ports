@@ -95,6 +95,15 @@ add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${PythonInterfaceF
 target_link_libraries(${ModuleName} wrapper_cpp_lib)
 set_target_properties(${ModuleName} PROPERTIES PREFIX "_")
 
+target_compile_options(${ModuleName}
+  PUBLIC
+    $<$<BOOL:${MSVC}>:
+        /wd4273 #Suppress: inconsistent dll linkage - from pymath.h (belongs to python headers) and xtgmath.h (belongs to VS headers)
+        /wd4127 #Suppress: conditional expression is constant - from interface_wrap.cxx(swig generated file)
+        /wd4706 #Suppress: assignment within conditional expression - from interface_wrap.cxx(swig generated file)
+    >
+)
+
 if(UNIX)
   target_include_directories(${ModuleName} PRIVATE "/usr/include/python2.7")
 else()
@@ -116,3 +125,22 @@ add_custom_target(python_sample
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/python/")
 ms_underscores_to_camel_case(python_sample CamelCasePythonSample)
 set_target_properties(python_sample PROPERTIES PROJECT_LABEL ${CamelCasePythonSample} FOLDER "Port Samples")
+
+#-------------CSharp Targets---------------
+set(ModuleName "csharp_port")
+
+#:span- Just so that it gets listed in the IDE
+configure_file("${CMAKE_SOURCE_DIR}/csharp/sample.cs" "${CMAKE_SOURCE_DIR}/csharp/sample.cs")
+
+configure_file("${CMAKE_SOURCE_DIR}/csharp/interface.i.in" "${CMAKE_BINARY_DIR}/csharp/interface.i")
+
+set(CSharpInterfaceFile "${CMAKE_BINARY_DIR}/csharp/interface_wrap.cxx")
+add_custom_command(OUTPUT ${CSharpInterfaceFile} COMMAND swig -c++ -csharp interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp")
+
+add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${CSharpInterfaceFile})
+target_link_libraries(${ModuleName} wrapper_cpp_lib)
+
+add_custom_command(TARGET ${ModuleName} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/csharp/")
+ms_underscores_to_camel_case(${ModuleName} CamelCaseCSharpPort)
+set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPort} FOLDER "Port Libs")
