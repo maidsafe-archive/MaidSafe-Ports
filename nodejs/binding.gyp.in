@@ -3,15 +3,28 @@
     {
       "target_name": "@ModuleName@",
       "sources": [ "@RelPathToSourceDir@/api.cc", "interface_wrap.cxx" ],
+			"conditions": [
+				['OS=="win"', {
+					'msvs_settings': {
+						'VCCLCompilerTool': {
+							'AdditionalOptions': [
+								'/MD',
+								'/EHsc'
+							]
+						}
+					}
+				}],
+				['OS=="linux"', {
+					"cflags_cc": [ "-std=c++11", "-fexceptions", "-frtti" ]
+				}]
+			],
       "include_dirs": [
         @FormattedHeaders@
       ],
       "libraries": [
         @FormattedLibs@
       ],
-      "cflags_cc": [ "-std=c++11", "-fexceptions", "-frtti" ],
       "defines": [ "APPLICATION_VERSION_MAJOR=1", "APPLICATION_VERSION_MINOR=0", "APPLICATION_VERSION_PATCH=1" ],
     }
   ]
 }
-
