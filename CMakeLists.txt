@@ -66,7 +66,7 @@ configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/
 
 add_custom_target(${ModuleName}
                     COMMAND swig -c++ -javascript -node interface.i
-                    COMMAND node-gyp configure build
+                    COMMAND node-gyp $<$<BOOL:${CMAKE_CL_64}>:--arch=x64> configure build
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs")
 ms_underscores_to_camel_case(${ModuleName} CamelCaseNodePort)
 set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
