@@ -58,6 +58,9 @@ get_dependency_paths(maidsafe_common CommonHeaders CommonLibs)
 format_list(CommonHeaders FormattedHeaders)
 format_list(CommonLibs FormattedLibs)
 
+get_target_property(WrapperLibLocation wrapper_cpp_lib LOCATION_RELEASE)
+SET(FormattedLibs ${FormattedLibs},\n"${WrapperLibLocation}")
+
 #:span- Just so that it gets listed in the IDE
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_SOURCE_DIR}/nodejs/sample.js")
 
@@ -66,14 +69,21 @@ configure_file("${CMAKE_SOURCE_DIR}/nodejs/binding.gyp.in" "${CMAKE_BINARY_DIR}/
 
 add_custom_target(${ModuleName}
                     COMMAND swig -c++ -javascript -node interface.i
-                    COMMAND node-gyp $<$<BOOL:${CMAKE_CL_64}>:--arch=x64> configure build
-                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs")
+                    COMMAND node-gyp configure build
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs"
+										DEPENDS wrapper_cpp_lib)
 ms_underscores_to_camel_case(${ModuleName} CamelCaseNodePort)
 set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseNodePort} FOLDER "Port Libs")
 
+if(${UNIX})
+	SET(NodeCommand nodejs)
+else()
+	SET(NodeCommand node)
+endif()
+
 add_custom_target(nodejs_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_BINARY_DIR}/nodejs/build/Release"
-                    COMMAND node sample.js
+                    COMMAND ${NodeCommand} sample.js
                     DEPENDS ${ModuleName}
                     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/nodejs/build/Release")
 

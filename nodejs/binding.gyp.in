@@ -2,14 +2,17 @@
   "targets": [
     {
       "target_name": "@ModuleName@",
-      "sources": [ "@RelPathToSourceDir@/api.cc", "interface_wrap.cxx" ],
+      "sources": [ "interface_wrap.cxx" ],
 			"conditions": [
 				['OS=="win"', {
 					'msvs_settings': {
 						'VCCLCompilerTool': {
 							'AdditionalOptions': [
 								'/MD',
-								'/EHsc'
+								'/EHsc',
+								'/wd4244',	#Disable warning C4244: '=' : conversion from 'int64_t' to 'int', possible loss of data.
+								'/wd4267',	#Disable warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data.
+								'/wd4506'		#Disable warning C4506: no definition for inline function.
 							]
 						}
 					}
