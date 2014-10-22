@@ -54,12 +54,9 @@ string(REPLACE "\n" "" RelPathToSourceDir ${RelPathToSourceDir})
 
 #-------------Nodejs Targets---------------
 set(ModuleName "nodejs_port")
-get_dependency_paths(maidsafe_common CommonHeaders CommonLibs)
-format_list(CommonHeaders FormattedHeaders)
-format_list(CommonLibs FormattedLibs)
-
-get_target_property(WrapperLibLocation wrapper_cpp_lib LOCATION_RELEASE)
-SET(FormattedLibs \"${WrapperLibLocation}\",\n${FormattedLibs})
+get_dependency_paths(wrapper_cpp_lib DependencyHeaders DependencyLibs)
+format_list(DependencyHeaders FormattedHeaders)
+format_list(DependencyLibs FormattedLibs)
 
 #:span- Just so that it gets listed in the IDE
 configure_file("${CMAKE_SOURCE_DIR}/nodejs/sample.js" "${CMAKE_SOURCE_DIR}/nodejs/sample.js")
