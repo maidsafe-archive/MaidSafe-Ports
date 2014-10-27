@@ -139,7 +139,7 @@ set(ModuleName "csharp_port")
 configure_file("${CMAKE_SOURCE_DIR}/csharp/interface.i.in" "${CMAKE_BINARY_DIR}/csharp/interface.i")
 
 set(CSharpInterfaceFile "${CMAKE_BINARY_DIR}/csharp/interface_wrap.cxx")
-add_custom_command(OUTPUT ${CSharpInterfaceFile} COMMAND swig -c++ -csharp -dllimport __Internal interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp")
+add_custom_command(OUTPUT ${CSharpInterfaceFile} COMMAND swig -c++ -csharp interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp")
 
 add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${CSharpInterfaceFile})
 target_link_libraries(${ModuleName} wrapper_cpp_lib)
