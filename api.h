@@ -30,7 +30,8 @@ class TestClass {
   }
 
   std::string PrintMe();
-
+  std::string HexEncode(std::string non_hex_input);
+  std::string HexDecode(std::string hex_input);
   /*
   const int GetStaticConstValue();
 

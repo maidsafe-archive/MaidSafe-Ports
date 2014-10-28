@@ -20,4 +20,9 @@ console.log('Getting double from function template:', testClassObject.GetTemplat
 
 console.log('\nTestClass::PrintMe():', testClassObject.PrintMe())
 
+console.log("\nEncoding - Some String");
+var hexEncodedString = testClassObject.HexEncode("Some String");
+console.log('Hex: ', hexEncodedString);
+console.log('Decoded: ', testClassObject.HexDecode(hexEncodedString));
+
 console.log('\nDone...');

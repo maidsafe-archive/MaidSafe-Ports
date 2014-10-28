@@ -152,4 +152,17 @@ if(MSVC)
                       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp/")
   ms_underscores_to_camel_case(${ModuleName} CamelCaseCSharpPort)
   set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPort} FOLDER "Port Libs")
+
+  # TODO: Warn-1607 needs fixed and not ignored
+  make_directory("${CMAKE_BINARY_DIR}/csharp/sample/")
+  add_custom_target(csharp_sample
+                      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/csharp/Sample.cs" "${CMAKE_BINARY_DIR}/csharp/sample/"
+                      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/csharp/csharp_ref_lib.dll" "${CMAKE_BINARY_DIR}/csharp/sample/"
+                      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/csharp/sample/"
+                      COMMAND csc.exe /nowarn:1607 /reference:\"${CMAKE_BINARY_DIR}/csharp/csharp_ref_lib.dll\" /out:sample.exe Sample.cs
+                      COMMAND sample.exe
+                      DEPENDS ${ModuleName}
+                      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp/sample")
+  ms_underscores_to_camel_case(csharp_sample CamelCaseCSharpSample)
+  set_target_properties(csharp_sample PROPERTIES PROJECT_LABEL ${CamelCaseCSharpSample} FOLDER "Port Samples")
 endif()

@@ -27,6 +27,14 @@ std::string TestClass::PrintMe() {
   return "You should see me";
 }
 
+std::string TestClass::HexEncode(std::string non_hex_input) {
+  return maidsafe::HexEncode(non_hex_input);
+}
+
+std::string TestClass::HexDecode(std::string hex_input) {
+  return maidsafe::HexDecode(hex_input);
+}
+
 /*
 const int TestClass::GetStaticConstValue() {
   return kStaticNumber;
