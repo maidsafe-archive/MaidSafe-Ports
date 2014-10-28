@@ -133,18 +133,23 @@ add_custom_target(python_sample
 ms_underscores_to_camel_case(python_sample CamelCasePythonSample)
 set_target_properties(python_sample PROPERTIES PROJECT_LABEL ${CamelCasePythonSample} FOLDER "Port Samples")
 
-#-------------CSharp Targets---------------
-set(ModuleName "csharp_port")
+#-------------MSVC - CSharp Targets---------------
+if(MSVC)
+  set(ModuleName "csharp_port")
 
-configure_file("${CMAKE_SOURCE_DIR}/csharp/interface.i.in" "${CMAKE_BINARY_DIR}/csharp/interface.i")
+  configure_file("${CMAKE_SOURCE_DIR}/csharp/interface.i.in" "${CMAKE_BINARY_DIR}/csharp/interface.i")
 
-set(CSharpInterfaceFile "${CMAKE_BINARY_DIR}/csharp/interface_wrap.cxx")
-add_custom_command(OUTPUT ${CSharpInterfaceFile} COMMAND swig -c++ -csharp interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp")
+  set(CSharpInterfaceFile "${CMAKE_BINARY_DIR}/csharp/interface_wrap.cxx")
+  add_custom_command(OUTPUT ${CSharpInterfaceFile} COMMAND swig -c++ -csharp interface.i WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp")
 
-add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${CSharpInterfaceFile})
-target_link_libraries(${ModuleName} wrapper_cpp_lib)
+  add_library(${ModuleName} SHARED "${CMAKE_SOURCE_DIR}/api.cc" ${CSharpInterfaceFile})
+  target_link_libraries(${ModuleName} wrapper_cpp_lib)
 
-add_custom_command(TARGET ${ModuleName} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/csharp/")
-ms_underscores_to_camel_case(${ModuleName} CamelCaseCSharpPort)
-set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPort} FOLDER "Port Libs")
+  add_custom_command(TARGET ${ModuleName} POST_BUILD
+                      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/csharp/")
+  add_custom_command(TARGET ${ModuleName} POST_BUILD
+                      COMMAND csc.exe /target:library /out:csharp_ref_lib.dll *.cs
+                      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/csharp/")
+  ms_underscores_to_camel_case(${ModuleName} CamelCaseCSharpPort)
+  set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPort} FOLDER "Port Libs")
+endif()
