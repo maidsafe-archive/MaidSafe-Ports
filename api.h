@@ -5,6 +5,7 @@
 #include <future>
 #include <limits>
 #include <string>
+#include <fstream>
 #include <functional>
 
 namespace sample_lib {
@@ -30,6 +31,10 @@ class TestClass {
   }
 
   std::string PrintMe();
+  
+  unsigned UseRudp();
+  
+  std::string CheckBootstrapsConnectivity(/*std::ofstream& results_fstream*/);
 
   /*
   const int GetStaticConstValue();

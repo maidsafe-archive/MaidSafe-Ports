@@ -27,8 +27,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_DEBUG_POSTFIX -d)
 
 add_library(wrapper_cpp_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
-target_link_libraries(wrapper_cpp_lib maidsafe_common)
-
+target_link_libraries(wrapper_cpp_lib
+  maidsafe_rudp
+  /home/spandan/virtualization/e/active/android-ndk-crystax-standalone-toolchain-4.8-21/arm-linux-androideabi/lib/armv7-a/libstdc++.a
+)
+target_include_directories(wrapper_cpp_lib
+PUBLIC
+  /home/spandan/virtualization/karya/git/maidsafe/MaidSafe/src/third_party_libs/header_only)
+  
 ms_underscores_to_camel_case(wrapper_cpp_lib CamelCaseLibraryName)
 set_target_properties(wrapper_cpp_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
 
@@ -151,3 +157,26 @@ add_custom_command(TARGET ${ModuleName} POST_BUILD
 										COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${ModuleName}> "${CMAKE_BINARY_DIR}/csharp/")
 ms_underscores_to_camel_case(${ModuleName} CamelCaseCSharpPort)
 set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPort} FOLDER "Port Libs")
+
+#-------------Android Targets---------------
+set(ModuleName "android_sample")
+
+configure_file("${CMAKE_SOURCE_DIR}/android/interface.i.in" "${CMAKE_BINARY_DIR}/android/interface.i")
+
+set(AndroidInterfaceFileName "interface_wrap.cc")
+set(AndroidInterfaceFile "${CMAKE_BINARY_DIR}/android/jni/${AndroidInterfaceFileName}")
+add_custom_command(
+  OUTPUT ${AndroidInterfaceFile}
+  COMMAND mkdir -p src/org/spandan
+  COMMAND mkdir jni
+  COMMAND swig -c++ -java -package org.spandan -outdir src/org/spandan -o jni/${AndroidInterfaceFileName} interface.i
+#  COMMAND javac -d ./src ./src/org/spandan/android_sample.java ./src/org/spandan/android_sampleJNI.java ./src/org/spandan/CustomError.java ./src/org/spandan/TestClass.java
+#  COMMAND jar -cvf sharedLib.jar -C ./src .
+  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/android")
+
+add_library(${ModuleName} SHARED ${AndroidInterfaceFile})
+target_link_libraries(${ModuleName} wrapper_cpp_lib)
+target_compile_options(${ModuleName}
+PRIVATE
+  -fno-strict-aliasing)
+
