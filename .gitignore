@@ -28,5 +28,4 @@
 *.app
 
 # Build Folder
-build/
-build_cmake/
+build*

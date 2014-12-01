@@ -29,11 +29,8 @@ set(CMAKE_DEBUG_POSTFIX -d)
 add_library(wrapper_cpp_lib STATIC "${CMAKE_SOURCE_DIR}/api.cc" "${CMAKE_SOURCE_DIR}/api.h")
 target_link_libraries(wrapper_cpp_lib
   maidsafe_rudp
-  /home/spandan/virtualization/e/active/android-ndk-crystax-standalone-toolchain-4.8-21/arm-linux-androideabi/lib/armv7-a/libstdc++.a
+  "${ANDROID_NDK_ROOT}/arm-linux-androideabi/lib/armv7-a/libstdc++.a"
 )
-target_include_directories(wrapper_cpp_lib
-PUBLIC
-  /home/spandan/virtualization/karya/git/maidsafe/MaidSafe/src/third_party_libs/header_only)
   
 ms_underscores_to_camel_case(wrapper_cpp_lib CamelCaseLibraryName)
 set_target_properties(wrapper_cpp_lib PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Library")
@@ -161,6 +158,16 @@ set_target_properties(${ModuleName} PROPERTIES PROJECT_LABEL ${CamelCaseCSharpPo
 #-------------Android Targets---------------
 set(ModuleName "android_sample")
 
+if(ANDROID_BUILD)
+  set(PLATFORM_PREFIX            "${ANDROID_NDK_ROOT}/sysroot")
+  set(PLATFORM_FLAGS             "-fPIC -Wno-psabi --sysroot=${PLATFORM_PREFIX}")
+  set(CMAKE_C_COMPILER           "${ANDROID_NDK_ROOT}/bin/arm-linux-androideabi-gcc")
+  set(CMAKE_CXX_COMPILER         "${ANDROID_NDK_ROOT}/bin/arm-linux-androideabi-g++")
+  set(CMAKE_C_FLAGS              "${PLATFORM_FLAGS} -march=armv7-a -mfloat-abi=softfp -mfpu=neon" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS            "${PLATFORM_FLAGS} -march=armv7-a -mfloat-abi=softfp -mfpu=neon" CACHE STRING "")
+  set(CMAKE_SHARED_LINKER_FLAGS  "-Wl,--fix-cortex-a8" CACHE STRING "")
+endif()
+
 configure_file("${CMAKE_SOURCE_DIR}/android/interface.i.in" "${CMAKE_BINARY_DIR}/android/interface.i")
 
 set(AndroidInterfaceFileName "interface_wrap.cc")
@@ -175,7 +182,7 @@ add_custom_command(
   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/android")
 
 add_library(${ModuleName} SHARED ${AndroidInterfaceFile})
-target_link_libraries(${ModuleName} wrapper_cpp_lib)
+target_link_libraries(${ModuleName} wrapper_cpp_lib ${ANDROID_NDK_ROOT}/sysroot/usr/lib/liblog.so)
 target_compile_options(${ModuleName}
 PRIVATE
   -fno-strict-aliasing)
