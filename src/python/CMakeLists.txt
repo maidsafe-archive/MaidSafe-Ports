@@ -8,6 +8,13 @@ project(python)
 include(../../cmake_modules/standard_setup.cmake)
 
 find_package(PythonLibs REQUIRED)
+if(NOT PYTHONLIBS_FOUND)
+  set(ErrorMessage "\nMissing Python Libs.  ")
+  set(ErrorMessage "${ErrorMessage}-- Skipping target python_port\n")
+  set(ErrorMessage "${ErrorMessage}-- Skipping target python_sample\n")
+  message("${ErrorMessage}")
+  return()
+endif()
 
 set(OutputPath "${CMAKE_BINARY_DIR}/python")
 

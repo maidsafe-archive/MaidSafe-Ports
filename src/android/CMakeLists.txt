@@ -101,7 +101,7 @@ add_custom_target(android_sample
         ${OutputPath}/class/libs/armeabi-v7a
     COMMAND ${AntTool} debug > ${OutputPath}/ant-output.log
     COMMAND echo '\\nBuild Success'
-    COMMAND echo 'To Deploy, run:\\n-- ${ANDROID_SDK_ROOT}/sdk/platform-tools/adb install android/class/bin/MyTest-debug.apk\\n'
+    COMMAND echo 'To Deploy, run:\\n-- ${ANDROID_SDK_ROOT}/sdk/platform-tools/adb install -r android/class/bin/MyTest-debug.apk\\n'
     DEPENDS android_port
     WORKING_DIRECTORY ${OutputPath}/class
 )
