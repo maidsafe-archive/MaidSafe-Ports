@@ -32,41 +32,15 @@ class TestClass {
 
   std::string PrintMe();
   
-  unsigned UseRudp();
-  
-  std::string CheckBootstrapsConnectivity(/*std::ofstream& results_fstream*/);
+  bool CheckBootstrapsConnectivity();
 
-  /*
-  const int GetStaticConstValue();
-
-  static const int kPublicStaticNumber = 99;
-  const static int kPublicStaticNumber = 99;
-
-  static std::unique_ptr<TestClass> FactoryFunction();
-
-  std::future<int> GetMyFutureValue();
-
-  void ThrowCustomError();
-  void ThrowStdError();
-
-  std::shared_ptr<int> GetSharedPtr();
-
-  std::unique_ptr<int> GetUniquePtr();
-
-  void SetCallback(std::function<void(int)> callback);
-  void InvokeCallback();
-  */
+  void PrintLogMessage();
 
  private:
   TestClass();
 
   int answer_;
   static const int kStaticNumber = 42;
-
-  /*
-  std::function<void(int)> callback_;
-  const static int kStaticNumber = 42;
-  */
 };
 
 }

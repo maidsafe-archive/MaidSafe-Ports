@@ -8,61 +8,73 @@ import android.widget.TextView;
 import android.widget.ScrollView;
 import java.util.Random;
 import android.text.method.ScrollingMovementMethod;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+import android.app.AlertDialog;
 
 public class MyTest extends Activity
 {
     TextView outputText = null;
     ScrollView scroller = null;
+    private String[] apiCalls = new String[] {"Random", "Set and Get val", "Invoke templates", "Invoke PrintMe", "Check Rudp", "Print Log"};
 
-    /** Called when the activity is first created. */
+    TestClass testClassObject = TestClass.RawFactoryFunction();
+    Random rnd = new Random();
+    int iRandom = rnd.nextInt(1000) + 1;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        outputText = (TextView)findViewById(R.id.OutputText);
-        outputText.setText("Press 'Run' to start...\n");
-        outputText.setMovementMethod(new ScrollingMovementMethod());
-
-        scroller = (ScrollView)findViewById(R.id.Scroller);
-    }
-
-    public void onRunButtonClick(View view)
-    {
-      outputText.append("Started...\n");
-      nativeCall();
-      outputText.append("Finished!\n");
-      
-      // Ensure scroll to end of text
-      scroller.post(new Runnable() {
-        public void run() {
-          scroller.fullScroll(ScrollView.FOCUS_DOWN);
+    protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, apiCalls);
+      setContentView(R.layout.main);
+      ListView listView = (ListView) findViewById(R.id.listView);
+      listView.setAdapter(adapter);
+      listView.setOnItemClickListener(new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+            executeApi(position);
         }
       });
     }
 
-    /** Calls into C/C++ code */
-    public void nativeCall()
-    {
-      outputText.append("Native Call...\n");
-      TestClass testClassObject = TestClass.RawFactoryFunction();
-      Random rnd = new Random();
-      int iRandom = rnd.nextInt(1000) + 1;
-      outputText.append("\nRandom Int: " + iRandom);
-      outputText.append("\nPassing var to C++..");
-      testClassObject.SetMyValue(iRandom);
-      outputText.append("\nGetting var from C++: " + testClassObject.GetMyValue());
-      //outputText.append("\nGetting Random var from C++: " + testClassObject.GetRandomUInt32());
+    private void showToast(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.show();
+    }
 
-      outputText.append("\n\nPassing data to the int, char and double function templates below:");
-      outputText.append("\nGetting int from function template: " + testClassObject.GetTemplateValueAsInt(86));
-      outputText.append("\nGetting char from function template: " + testClassObject.GetTemplateValueAsChar('V'));
-      outputText.append("\nGetting double from function template: " + testClassObject.GetTemplateValueAsDouble(86.05));
-
-      outputText.append("\n\nTestClass::PrintMe(): " + testClassObject.PrintMe());
-      outputText.append("\n\nTestClass::Connection result: " + testClassObject.CheckBootstrapsConnectivity());
-      outputText.append("\n\nDone...");
+    private void executeApi(int id) {
+      switch(id) {
+        case 0:
+          showToast("Random Int: " + iRandom);
+          break;
+        case 1:
+          testClassObject.SetMyValue(iRandom);
+          showToast("Getting var from C++: " + testClassObject.GetMyValue());
+          break;
+        case 2:
+          String temp = "\nGetting int from function template: " + testClassObject.GetTemplateValueAsInt(86);
+          temp += "\nGetting char from function template: " + testClassObject.GetTemplateValueAsChar('V');
+          temp += "\nGetting double from function template: " + testClassObject.GetTemplateValueAsDouble(86.05);
+          showToast(temp);
+          break;
+        case 3:
+          showToast("\nTestClass::PrintMe(): " + testClassObject.PrintMe());
+          break;
+        case 4:
+          showToast("\nTestClass::Connection result: " + testClassObject.CheckBootstrapsConnectivity());
+          break;
+        case 5:
+          testClassObject.PrintLogMessage();
+          showToast("\nLog Message Submitted.");
+          break;
+        default:
+          showToast("NO match found");
+          break;
+      }
     }
 
     /** static constructor */

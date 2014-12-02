@@ -9,42 +9,10 @@
     android:layout_height="fill_parent"
 
     >
-
-<Button
-
-    android:id="@+id/RunButton"  
-
-    android:layout_width="wrap_content"  
-
-    android:layout_height="wrap_content"  
-
-    android:text="Run..."  
-
-    android:onClick="onRunButtonClick"
-
-    />
-
-<ScrollView
-
-    android:id="@+id/Scroller"
-
-    android:layout_width="fill_parent"
-
-    android:layout_height="fill_parent"
-
-    >
-
-<TextView
-
-    android:id="@+id/OutputText"
-
-    android:layout_width="wrap_content"
-
-    android:layout_height="wrap_content"
-
-    />
-
-</ScrollView>
+<ListView android:id="@+id/listView"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+        />
 
 </LinearLayout>
 

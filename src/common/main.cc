@@ -13,6 +13,14 @@ int main() {
     std::cout << i + 1 << ") TestClass::GetRandomUInt32():\t" << client->GetRandomUInt32() << '\n';
   }
 
+  std::cout << "\n==============\n";
+
+  std::cout << client->PrintMe() << "\n\n";
+
+  std::cout << "\n==============\n";
+
+  std::cout  << client->CheckBootstrapsConnectivity() << "\n\n";
+
 
   /*
   auto client(sample_lib::TestClass::FactoryFunction());
