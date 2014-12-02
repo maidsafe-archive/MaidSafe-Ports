@@ -80,3 +80,13 @@ function(format_list InList OutList)
   string(REGEX REPLACE ", \n$" "" FormattedList ${FormattedList})
   set(${OutList} ${FormattedList} PARENT_SCOPE)
 endfunction()
+
+function(set_target_output_path Target FolderPath)
+  set_target_properties(${Target} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${FolderPath}"
+    LIBRARY_OUTPUT_DIRECTORY "${FolderPath}"
+    RUNTIME_OUTPUT_DIRECTORY "${FolderPath}"
+  )
+  message("-- Added target ${Target}")
+endfunction()
+

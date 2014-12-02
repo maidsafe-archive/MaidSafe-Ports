@@ -1,10 +1,10 @@
-%module @ModuleName@
+%module android_port
 %{
-#include "@CMAKE_SOURCE_DIR@/api.h"
+#include "@common_SOURCE_DIR@/api.h"
 %}
 
 %include "std_string.i"
-%include "@CMAKE_SOURCE_DIR@/api.h"
+%include "@common_SOURCE_DIR@/api.h"
 %template(GetTemplateValueAsInt) sample_lib::TestClass::GetTemplateValue<int>;
 %template(GetTemplateValueAsChar) sample_lib::TestClass::GetTemplateValue<char>;
 %template(GetTemplateValueAsDouble) sample_lib::TestClass::GetTemplateValue<double>;
