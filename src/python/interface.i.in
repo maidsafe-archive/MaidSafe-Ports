@@ -1,11 +1,11 @@
-%module @ModuleName@
+%module python_port
 %{
 #define SWIG_FILE_WITH_INIT
-#include "@RelPathToSourceDir@/api.h"
+#include "@common_SOURCE_DIR@/api.h"
 %}
 
 %include "std_string.i"
-%include "@RelPathToSourceDir@/api.h"
+%include "@common_SOURCE_DIR@/api.h"
 %template(GetTemplateValueAsInt) sample_lib::TestClass::GetTemplateValue<int>;
 %template(GetTemplateValueAsChar) sample_lib::TestClass::GetTemplateValue<char>;
 %template(GetTemplateValueAsDouble) sample_lib::TestClass::GetTemplateValue<double>;
