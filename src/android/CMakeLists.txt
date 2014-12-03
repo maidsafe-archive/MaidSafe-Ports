@@ -64,7 +64,7 @@ if(NOT EXISTS ${OutputPath}/class/)
                   RESULT_VARIABLE ResVar
                   OUTPUT_VARIABLE OutVar)
   if(NOT ResVar STREQUAL "0")
-    set(ErrorMessage "Failed to create an empty android project.\n\n${ResVar}\n\n")
+    set(ErrorMessage "Failed to create an empty android project.\n\n")
     set(ErrorMessage "${ErrorMessage}-- To skip android_sample target, run:\n")
     set(ErrorMessage "${ErrorMessage}    cmake . -DANDROID_SKIP_SAMPLE=ON\n\n")
     message(FATAL_ERROR "${ErrorMessage}")
@@ -85,10 +85,35 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 RESULT_VARIABLE ResVar
                 OUTPUT_VARIABLE OutVar)
 if(NOT ResVar STREQUAL "0")
-  set(ErrorMessage "Failed to setup android project.\n\n${ResVar}\n\n")
+  set(ErrorMessage "Failed to setup android project.\n\n")
   set(ErrorMessage "${ErrorMessage}-- To skip android_sample target, run:\n")
   set(ErrorMessage "${ErrorMessage}    cmake . -DANDROID_SKIP_SAMPLE=ON\n\n")
   message(FATAL_ERROR "${ErrorMessage}")
+endif()
+
+# Check for gdb support
+check_ndk_gdb(IsGDBAvailable)
+if(IsGDBAvailable)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${OutputPath}/class/jni
+                  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                          ${android_SOURCE_DIR}/sample/class/jni/Android.mk
+                          ${OutputPath}/class/jni
+                  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                          ${android_SOURCE_DIR}/sample/class/libs/armeabi-v7a/gdb.setup
+                          ${OutputPath}/class/libs/armeabi-v7a
+                  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                          ${ANDROID_NDK_ROOT}/prebuilt/android-arm/gdbserver/gdbserver
+                          ${OutputPath}/class/libs/armeabi-v7a
+                  WORKING_DIRECTORY ${OutputPath}/class
+                  RESULT_VARIABLE ResVar
+                  OUTPUT_VARIABLE OutVar)
+  if(NOT ResVar STREQUAL "0")
+    set(ErrorMessage "Failed to setup android project.\n\n")
+    set(ErrorMessage "${ErrorMessage}-- To skip android_sample target, run:\n")
+    set(ErrorMessage "${ErrorMessage}    cmake . -DANDROID_SKIP_SAMPLE=ON\n\n")
+    message(FATAL_ERROR "${ErrorMessage}")
+  endif()
+  configure_file("${android_SOURCE_DIR}/sample/class/jni/Application.mk" "${OutputPath}/class/jni/Application.mk")
 endif()
 
 add_custom_target(android_sample
@@ -105,6 +130,12 @@ add_custom_target(android_sample
     DEPENDS android_port
     WORKING_DIRECTORY ${OutputPath}/class
 )
+if(IsGDBAvailable)
+  add_custom_command(TARGET android_sample
+      POST_BUILD
+      COMMAND echo 'To Debug once deployed, run:\\n-- cd android/class && ${ANDROID_NDK_ROOT}/ndk-gdb --adb=${ANDROID_SDK_ROOT}/sdk/platform-tools/adb\\n'
+  )
+endif()
 ms_underscores_to_camel_case(android_sample CamelCaseAppName)
 set_target_properties(android_sample PROPERTIES PROJECT_LABEL ${CamelCaseAppName} FOLDER "Android")
 set_target_output_path(android_sample "${OutputPath}")

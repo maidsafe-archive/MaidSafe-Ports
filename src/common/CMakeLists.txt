@@ -11,8 +11,8 @@ add_library(cpp_wrapper STATIC "${common_SOURCE_DIR}/api.cc" "${common_SOURCE_DI
 target_link_libraries(cpp_wrapper
   maidsafe_rudp
   $<$<BOOL:${ANDROID_BUILD}>:
-      "${ANDROID_NDK_ROOT}/arm-linux-androideabi/lib/armv7-a/libstdc++.a"
-      "${ANDROID_NDK_ROOT}/sysroot/usr/lib/liblog.so"
+      "${ANDROID_NDK_TOOLCHAIN_ROOT}/arm-linux-androideabi/lib/armv7-a/libstdc++.a"
+      "${ANDROID_NDK_TOOLCHAIN_ROOT}/sysroot/usr/lib/liblog.so"
   >
 )
   
