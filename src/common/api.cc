@@ -8,16 +8,13 @@
 #include <vector>
 #include <sstream>
 
+#include "maidsafe/common/log.h"
 #include "maidsafe/common/utils.h"
 #include "maidsafe/common/node_id.h"
 #include "maidsafe/common/utils.h"
 #include "maidsafe/rudp/managed_connections.h"
 #include "maidsafe/rudp/return_codes.h"
 #include "boost/asio.hpp"
-
-#ifdef __ANDROID__
-#include "android/log.h"
-#endif
 
 using boost::asio::ip::udp;
 using boost::asio::ip::address;
@@ -92,10 +89,12 @@ bool TestClass::CheckBootstrapsConnectivity() {
 }
 
 void TestClass::PrintLogMessage() {
-  LOG(kError) << "This is MaidSafe log message.";
-#ifdef __ANDROID__
-  __android_log_print(ANDROID_LOG_DEBUG, "MAIDSAFE_ANDROID_LOG_TAG", "This is Android Log message.");
-#endif
+  LOG(kVerbose) << "kVerbose message.";
+  LOG(kInfo) << "kInfo message.";
+  LOG(kSuccess) << "kSuccess message.";
+  LOG(kWarning) << "kWarning message.";
+  LOG(kError) << "kError message.";
+  LOG(kAlways) << "kAlways message.";
 }
 
 }
