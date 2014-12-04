@@ -94,8 +94,8 @@ endif()
 # Check for gdb support
 check_ndk_gdb(IsGDBAvailable)
 if(IsGDBAvailable)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${OutputPath}/class/jni
-                  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  configure_file("${android_SOURCE_DIR}/sample/class/jni/Application.mk" "${OutputPath}/class/jni/Application.mk")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
                           ${android_SOURCE_DIR}/sample/class/jni/Android.mk
                           ${OutputPath}/class/jni
                   COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -113,7 +113,6 @@ if(IsGDBAvailable)
     set(ErrorMessage "${ErrorMessage}    cmake . -DANDROID_SKIP_SAMPLE=ON\n\n")
     message(FATAL_ERROR "${ErrorMessage}")
   endif()
-  configure_file("${android_SOURCE_DIR}/sample/class/jni/Application.mk" "${OutputPath}/class/jni/Application.mk")
 endif()
 
 add_custom_target(android_sample
