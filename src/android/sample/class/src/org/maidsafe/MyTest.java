@@ -19,7 +19,7 @@ public class MyTest extends Activity
 {
     TextView outputText = null;
     ScrollView scroller = null;
-    private String[] apiCalls = new String[] {"Random", "Set and Get val", "Invoke templates", "Invoke PrintMe", "Check Rudp", "Print Log"};
+    private String[] apiCalls = new String[] {"Random", "Set and Get val", "Invoke templates", "Invoke PrintMe", "Check Rudp", "Print Log", "Http"};
 
     TestClass testClassObject = TestClass.RawFactoryFunction();
     Random rnd = new Random();
@@ -70,6 +70,9 @@ public class MyTest extends Activity
         case 5:
           testClassObject.PrintLogMessage();
           showToast("\nLog Message Submitted.");
+          break;
+        case 6:
+          showToast("Http Message:\n" + testClassObject.GetHttpMessage("www.boost.org", "80"));
           break;
         default:
           showToast("NO match found");

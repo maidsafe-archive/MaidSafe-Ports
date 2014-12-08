@@ -31,10 +31,12 @@ class TestClass {
   }
 
   std::string PrintMe();
-  
+
   bool CheckBootstrapsConnectivity();
 
   void PrintLogMessage();
+
+  std::string GetHttpMessage(const std::string& host, const std::string& service);
 
  private:
   TestClass();

@@ -97,4 +97,95 @@ void TestClass::PrintLogMessage() {
   LOG(kAlways) << "kAlways message.";
 }
 
+std::string GetHttpMessage(const std::string& host, const std::string& service) {
+  std::stringstream str_stream;
+
+  try {
+    boost::asio::io_service io_service;
+    // Get a list of endpoints corresponding to the server name.
+    str_stream << "-1\n";
+    tcp::resolver resolver(io_service);
+    tcp::resolver::query query(tcp::v4(), host, service);
+//    tcp::resolver::query query("www.boost.org", "http");
+    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    tcp::resolver::iterator end;
+
+    str_stream << "0\n";
+    // Try each endpoint until we successfully establish a connection.
+    tcp::socket socket(io_service);
+    boost::system::error_code error = boost::asio::error::host_not_found;
+    while (error && endpoint_iterator != end)
+    {
+      socket.close();
+      socket.connect(*endpoint_iterator++, error);
+    }
+    str_stream << "1\n";
+    if (error)
+      throw boost::system::system_error(error);
+
+    str_stream << "2\n";
+    // Form the request. We specify the "Connection: close" header so that the
+    // server will close the socket after transmitting the response. This will
+    // allow us to treat all data up until the EOF as the content.
+    boost::asio::streambuf request;
+    std::ostream request_stream(&request);
+    request_stream << "GET " << "/LICENSE_1_0.txt" << " HTTP/1.0\r\n";
+    request_stream << "Host: " << "www.boost.org" << "\r\n";
+    request_stream << "Accept: */*\r\n";
+    request_stream << "Connection: close\r\n\r\n";
+
+    // Send the request.
+    str_stream << "3\n";
+    boost::asio::write(socket, request);
+
+    // Read the response status line. The response streambuf will automatically
+    // grow to accommodate the entire line. The growth may be limited by passing
+    // a maximum size to the streambuf constructor.
+    boost::asio::streambuf response;
+    boost::asio::read_until(socket, response, "\r\n");
+
+    // Check that response is OK.
+    std::istream response_stream(&response);
+    std::string http_version;
+    response_stream >> http_version;
+    unsigned int status_code;
+    response_stream >> status_code;
+    std::string status_message;
+    std::getline(response_stream, status_message);
+    if (!response_stream || http_version.substr(0, 5) != "HTTP/") {
+      str_stream << "Invalid response\n";
+    }
+    else if (status_code != 200) {
+      str_stream << "Response returned with status code " << status_code << "\n";
+    }
+
+    else {
+      // Read the response headers, which are terminated by a blank line.
+      boost::asio::read_until(socket, response, "\r\n\r\n");
+
+      // Process the response headers.
+      std::string header;
+      while (std::getline(response_stream, header) && header != "\r")
+        str_stream << header << "\n";
+      str_stream << "\n";
+
+      // Write whatever content we already have to output.
+      if (response.size() > 0)
+        str_stream << &response;
+
+      // Read until EOF, writing data to output as we go.
+      while (boost::asio::read(socket, response,
+                               boost::asio::transfer_at_least(1), error))
+        str_stream << &response;
+      if (error != boost::asio::error::eof)
+        throw boost::system::system_error(error);
+    }
+  }
+  catch (std::exception& e) {
+    str_stream << "Exception: " << e.what() << "\n";
+  }
+
+  return str_stream.str();
+}
+
 }
