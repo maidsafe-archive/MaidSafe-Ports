@@ -80,7 +80,7 @@ std::string TestClass::PrintMe() {
 
 bool TestClass::CheckBootstrapsConnectivity() {
   std::pair<udp::endpoint, int> result;
-  result.first = udp::endpoint {address::from_string("128.199.159.50"), maidsafe::kLivePort};
+  result.first = udp::endpoint {address::from_string("192.168.92.130"), maidsafe::kLivePort};
   result.second = int {};
 
   result.second = CanConnect(result.first);
@@ -97,7 +97,7 @@ void TestClass::PrintLogMessage() {
   LOG(kAlways) << "kAlways message.";
 }
 
-std::string GetHttpMessage(const std::string& host, const std::string& service) {
+std::string TestClass::GetHttpMessage(const std::string& host, const std::string& service) {
   std::stringstream str_stream;
 
   try {

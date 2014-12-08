@@ -72,7 +72,7 @@ public class MyTest extends Activity
           showToast("\nLog Message Submitted.");
           break;
         case 6:
-          showToast("Http Message:\n" + testClassObject.GetHttpMessage("www.boost.org", "80"));
+          showToast("Http Message:\n" + testClassObject.GetHttpMessage("192.168.92.130", "8080"));
           break;
         default:
           showToast("NO match found");

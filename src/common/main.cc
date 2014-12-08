@@ -19,6 +19,10 @@ int main() {
 
   std::cout << "\n==============\n";
 
+  std::cout  << client->GetHttpMessage("192.168.92.130","8080") << "\n\n";
+
+  std::cout << "\n==============\n";
+
   std::cout  << client->CheckBootstrapsConnectivity() << "\n\n";
 
   client->PrintLogMessage();
