@@ -17,9 +17,9 @@ if(NOT MaidSafeExport)
 endif()
 include(${MaidSafeExport})
 
-find_file(Swig NAMES swig
+find_file(Swig NAMES swig swig.exe
                PATHS ${SWIG_BINARY_DIR})
-if(NOT MaidSafeExport)
+if(NOT Swig)
   set(ErrorMessage "\n\nCan't find swig.  ")
   set(ErrorMessage "${ErrorMessage}Currently SWIG_BINARY_DIR is set to ")
   set(ErrorMessage "${ErrorMessage}\"${SWIG_BINARY_DIR}\"  It must be set to the ")
