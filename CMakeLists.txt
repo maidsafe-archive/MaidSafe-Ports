@@ -24,7 +24,7 @@ if(ANDROID_BUILD)
   set(SubModules ${SubModules} android)
 else()
   # TODO(Viv) Implement Submodule format for this section too
-  set(SubModules ${SubModules} python)
+  set(SubModules ${SubModules} nodejs python)
 endif()
 
 foreach(SubModule ${SubModules})

@@ -1,10 +1,10 @@
-%module @ModuleName@
+%module nodejs_port
 %{
-#include "@RelPathToSourceDir@/api.h"
+#include "@RelPathToCommonSourceDir@/api.h"
 %}
 
 %include "std_string.i"
-%include "@RelPathToSourceDir@/api.h"
+%include "@RelPathToCommonSourceDir@/api.h"
 %template(GetTemplateValueAsInt) sample_lib::TestClass::GetTemplateValue<int>;
 %template(GetTemplateValueAsChar) sample_lib::TestClass::GetTemplateValue<char>;
 %template(GetTemplateValueAsDouble) sample_lib::TestClass::GetTemplateValue<double>;

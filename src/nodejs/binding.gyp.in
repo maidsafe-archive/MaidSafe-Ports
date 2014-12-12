@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "@ModuleName@",
+      "target_name": "nodejs_port",
       "sources": [ "interface_wrap.cxx" ],
 			"conditions": [
 				['OS=="win"', {
