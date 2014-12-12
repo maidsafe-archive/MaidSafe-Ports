@@ -18,7 +18,7 @@ set(SkipAllTargetsMessage "${SkipAllTargetsMessage}-- Skipping target nodejs_sam
 if(UNIX)
   set(NodeJsName "nodejs")
 else()
-  set(NodeJsName "node")
+  set(NodeJsName "node.exe")
 endif()
 
 find_file(NodeJs NAMES ${NodeJsName})

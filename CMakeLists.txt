@@ -37,4 +37,3 @@ foreach(SubModule ${SubModules})
   set(${SubModule}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/${SubModule})
 endforeach()
 message("${EqualsSeperator}")
-

@@ -15,4 +15,9 @@ print "{} {}".format("Getting char from function template:", testClassObject.Get
 print "{} {}".format("Getting double from function template:", testClassObject.GetTemplateValueAsDouble(86.05))
 
 print "{} {}".format("\nTestClass::PrintMe():", testClassObject.PrintMe())
+
+print "\nEncoding - Some String"
+hexEncodedString = testClassObject.HexEncode("Some String")
+print "{} {}".format("Hex:", hexEncodedString)
+print "{} {}".format("Decoded:", testClassObject.HexDecode(hexEncodedString))
 print "\nDone..."
