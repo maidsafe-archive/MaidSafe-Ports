@@ -91,7 +91,7 @@ function(get_dependency_paths Target HeaderPaths LibPaths)
         else()
           get_lib_release_location(${CurrentLib} CurrentLibPath)
 
-          if(CurrentLibPath)
+          if(CurrentLibPath AND NOT ${CurrentLibPath} STREQUAL rt)
             set(${LibPaths} "${${LibPaths}};${CurrentLibPath}")
           endif()
         endif()

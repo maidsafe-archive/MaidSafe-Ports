@@ -12,16 +12,17 @@ include(../../cmake_modules/standard_setup.cmake)
 #==================================================================================================#
 
 set(SkipAllTargetsMessage "-- Skipping target nodejs_port\n")
-set(SkipAllTargetsMessage "${SkipAllTargetsMessage}-- Skipping target nodejs_sample\n")
+set(SkipAllTargetsMessage "${SkipAllTargetsMessage}-- Skipping target nodejs_sample")
 
-# Find node
-if(UNIX)
-  set(NodeJsName "nodejs")
-else()
-  set(NodeJsName "node.exe")
+# Check if Debug build
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT ${CMAKE_BUILD_TYPE} STREQUAL Release)
+  set(ErrorMessage "\nCMAKE_BUILD_TYPE needs to be Release for nodejs ports.\n\n")
+  message("${ErrorMessage}${SkipAllTargetsMessage}")
+  return()
 endif()
 
-find_file(NodeJs NAMES ${NodeJsName})
+# Find node
+find_file(NodeJs NAMES node node.exe nodejs)
 if(NOT NodeJs)
   set(ErrorMessage "\nMissing nodejs.\n")
   set(ErrorMessage "${ErrorMessage}nodejs is required to build nodejs ports.\n")
@@ -63,9 +64,6 @@ string(REPLACE "\n" "" RelPathToCommonSourceDir ${RelPathToCommonSourceDir})
 get_dependency_paths(cpp_wrapper WrapperHeaders WrapperLibs)
 format_list(WrapperHeaders FormattedHeaders)
 format_list(WrapperLibs FormattedLibs)
-
-# get_target_property(WrapperLibLocation cpp_wrapper LOCATION_DEBUG)
-# SET(FormattedLibs \"${WrapperLibLocation}\",\n${FormattedLibs})
 
 configure_file("${nodejs_SOURCE_DIR}/interface.i.in" "${OutputPath}/interface.i")
 configure_file("${nodejs_SOURCE_DIR}/binding.gyp.in" "${OutputPath}/binding.gyp")

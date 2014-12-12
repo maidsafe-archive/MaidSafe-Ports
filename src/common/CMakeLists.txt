@@ -8,13 +8,10 @@ project(common)
 include(../../cmake_modules/standard_setup.cmake)
 
 add_library(cpp_wrapper STATIC "${common_SOURCE_DIR}/api.cc" "${common_SOURCE_DIR}/api.h")
-target_link_libraries(cpp_wrapper
-  maidsafe_rudp
-  $<$<BOOL:${ANDROID_BUILD}>:
-      "${ANDROID_NDK_TOOLCHAIN_ROOT}/arm-linux-androideabi/lib/armv7-a/libstdc++.a"
-      "${ANDROID_NDK_TOOLCHAIN_ROOT}/sysroot/usr/lib/liblog.so"
-  >
-)
+target_link_libraries(cpp_wrapper maidsafe_rudp)
+if(ANDROID_BUILD)
+  target_link_libraries(cpp_wrapper "${ANDROID_NDK_TOOLCHAIN_ROOT}/arm-linux-androideabi/lib/armv7-a/libstdc++.a")
+endif()
   
 ms_underscores_to_camel_case(cpp_wrapper CamelCaseLibraryName)
 set_target_properties(cpp_wrapper PROPERTIES PROJECT_LABEL ${CamelCaseLibraryName} FOLDER "Common")

@@ -18,11 +18,7 @@ console.log('Getting int from function template:', testClassObject.GetTemplateVa
 console.log('Getting char from function template:', testClassObject.GetTemplateValueAsChar(86.05))
 console.log('Getting double from function template:', testClassObject.GetTemplateValueAsDouble(86.05))
 
-console.log('\nTestClass::PrintMe():', testClassObject.PrintMe())
-
-console.log("\nEncoding - Some String");
-var hexEncodedString = testClassObject.HexEncode("Some String");
-console.log('Hex: ', hexEncodedString);
-console.log('Decoded: ', testClassObject.HexDecode(hexEncodedString));
+console.log('\nTestClass::PrintMe():', testClassObject.PrintMe());
+testClassObject.PrintLogMessage();
 
 console.log('\nDone...');
