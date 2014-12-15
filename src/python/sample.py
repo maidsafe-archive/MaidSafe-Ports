@@ -16,8 +16,4 @@ print "{} {}".format("Getting double from function template:", testClassObject.G
 
 print "{} {}".format("\nTestClass::PrintMe():", testClassObject.PrintMe())
 
-print "\nEncoding - Some String"
-hexEncodedString = testClassObject.HexEncode("Some String")
-print "{} {}".format("Hex:", hexEncodedString)
-print "{} {}".format("Decoded:", testClassObject.HexDecode(hexEncodedString))
 print "\nDone..."
