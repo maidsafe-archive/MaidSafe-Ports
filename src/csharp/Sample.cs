@@ -19,11 +19,6 @@ namespace Sample {
       Console.WriteLine("Getting double from function template: {0}", testClassObject.GetTemplateValueAsDouble(86.05));
 
       Console.WriteLine("\nTestClass::PrintMe(): {0}", testClassObject.PrintMe());
-
-      Console.WriteLine("\nEncoding - Some String");
-      var hexEncodedString = testClassObject.HexEncode("Some String");
-      Console.WriteLine("Hex: {0}", hexEncodedString);
-      Console.WriteLine("Decoded: {0}", testClassObject.HexDecode(hexEncodedString));
       
       Console.Read();
     }
