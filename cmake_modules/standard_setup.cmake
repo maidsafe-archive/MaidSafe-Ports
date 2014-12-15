@@ -24,7 +24,7 @@ if(NOT Swig)
   set(ErrorMessage "${ErrorMessage}Currently SWIG_BINARY_DIR is set to ")
   set(ErrorMessage "${ErrorMessage}\"${SWIG_BINARY_DIR}\"  It must be set to the ")
   set(ErrorMessage "${ErrorMessage}Binary dir for swig.\nTo set it, run:\n")
-  set(ErrorMessage "${ErrorMessage}    cmake . -SWIG_BINARY_DIR=\"<path to swig binary dir>\"\n\n")
+  set(ErrorMessage "${ErrorMessage}    cmake . -DSWIG_BINARY_DIR=\"<path to swig binary dir>\"\n\n")
   message(FATAL_ERROR "${ErrorMessage}")
 endif()
 
