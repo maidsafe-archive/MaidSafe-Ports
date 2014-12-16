@@ -19,6 +19,5 @@ console.log('Getting char from function template:', testClassObject.GetTemplateV
 console.log('Getting double from function template:', testClassObject.GetTemplateValueAsDouble(86.05))
 
 console.log('\nTestClass::PrintMe():', testClassObject.PrintMe());
-testClassObject.PrintLogMessage();
 
 console.log('\nDone...');

@@ -28,6 +28,9 @@ public class MyTest extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
+      testClassObject.InitialiseLogging();
+
       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, apiCalls);
       setContentView(R.layout.main);
       ListView listView = (ListView) findViewById(R.id.listView);

@@ -46,6 +46,7 @@ endif()
 set_target_output_path(python_port "${OutputPath}")
 
 add_custom_target(python_sample
+                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:python_port>" "${OutputPath}"
                     COMMAND ${CMAKE_COMMAND} -E copy "${python_SOURCE_DIR}/sample.py" "${OutputPath}"
                     COMMAND python sample.py
                     DEPENDS python_port

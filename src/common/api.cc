@@ -53,11 +53,14 @@ TestClass::TestClass()
   : answer_(98) {}
 
 TestClass* TestClass::RawFactoryFunction() {
+  return new TestClass{};
+}
+
+void TestClass::InitialiseLogging() {
   char argv0[][20] = {"PortSample", "--log_folder", "", "--log_no_async", "true", "--log_*", "I"};
   char* argv1[7] = {argv0[0], argv0[1], argv0[2], argv0[3], argv0[4], argv0[5], argv0[6]};
   char** argv = argv1;
   maidsafe::log::Logging::Instance().Initialise(7, argv);
-  return new TestClass{};
 }
 
 void TestClass::SetMyValue(int number) {

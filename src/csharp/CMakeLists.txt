@@ -57,7 +57,7 @@ add_custom_target(csharp_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "${OutputPath}/csharp_wrapper.dll" "${OutputPath}/sample/"
                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:csharp_port> "${OutputPath}/sample/"
                     COMMAND ${CSharpCompiler} /nowarn:1607 /reference:\"${OutputPath}/sample/csharp_wrapper.dll\" /out:sample.exe Sample.cs
-                    # COMMAND sample.exe # Currently breaks
+                    COMMAND sample.exe
                     DEPENDS csharp_port
                     WORKING_DIRECTORY "${OutputPath}/sample")
 ms_underscores_to_camel_case(csharp_sample CamelCaseAppName)

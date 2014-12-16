@@ -20,6 +20,7 @@ class TestClass {
   ~TestClass() = default;
 
   static TestClass* RawFactoryFunction();
+  void InitialiseLogging();
   void SetMyValue(int number);
   int GetMyValue();
 
