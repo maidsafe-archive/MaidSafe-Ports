@@ -5,8 +5,6 @@ endif()
 
 project(python)
 
-include(../../cmake_modules/standard_setup.cmake)
-
 find_package(PythonLibs REQUIRED)
 if(NOT PYTHONLIBS_FOUND)
   set(ErrorMessage "\nMissing Python Libs.  ")
@@ -44,6 +42,8 @@ if(MSVC)
   set_target_properties(python_port PROPERTIES SUFFIX ".pyd")
 endif()
 set_target_output_path(python_port "${OutputPath}")
+
+set_source_files_properties(${PythonInterfaceFile} PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
 
 add_custom_target(python_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:python_port>" "${OutputPath}"

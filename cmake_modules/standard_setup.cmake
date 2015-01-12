@@ -1,9 +1,3 @@
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 find_file(MaidSafeExport NAMES maidsafe_export.cmake
                          PATHS ${MAIDSAFE_BINARY_DIR}
                          NO_DEFAULT_PATH)
@@ -17,6 +11,12 @@ if(NOT MaidSafeExport)
 endif()
 include(${MaidSafeExport})
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 find_file(Swig NAMES swig swig.exe
                PATHS ${SWIG_BINARY_DIR})
 if(NOT Swig)
@@ -29,18 +29,3 @@ if(NOT Swig)
 endif()
 
 set(CMAKE_DEBUG_POSTFIX )
-
-if(ANDROID_BUILD)
-  if(NOT ANDROID_NDK_TOOLCHAIN_ROOT)
-    set(ErrorMessage "ANDROID_NDK_TOOLCHAIN_ROOT is required for Android builds.\nTo set it, run:\n")
-    set(ErrorMessage "${ErrorMessage}    cmake . -DANDROID_NDK_TOOLCHAIN_ROOT=\"<path to ndk standalone toolchain>\"\n\n")
-    message(FATAL_ERROR "${ErrorMessage}")
-  endif()
-  set(PLATFORM_PREFIX "${ANDROID_NDK_TOOLCHAIN_ROOT}/sysroot")
-  set(PLATFORM_FLAGS "-fPIC -Wno-psabi --sysroot=${PLATFORM_PREFIX}")
-  set(CMAKE_C_COMPILER "${ANDROID_NDK_TOOLCHAIN_ROOT}/bin/arm-linux-androideabi-gcc")
-  set(CMAKE_CXX_COMPILER "${ANDROID_NDK_TOOLCHAIN_ROOT}/bin/arm-linux-androideabi-g++")
-  set(CMAKE_C_FLAGS "${PLATFORM_FLAGS} -march=armv7-a -mfloat-abi=softfp -mfpu=neon" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS "${PLATFORM_FLAGS} -march=armv7-a -mfloat-abi=softfp -mfpu=neon" CACHE STRING "")
-  set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--fix-cortex-a8" CACHE STRING "")
-endif()

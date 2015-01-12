@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 2.8.12.2 FATAL_ERROR)
 
+include(${CMAKE_SOURCE_DIR}/cmake_modules/standard_setup.cmake)
+
 project(maidsafe_port)
+if(ANDROID_BUILD)
+  ms_android_setup_flags()
+  message("===========================================")
+  message("Cross-compiling for Android Api Level - ${AndroidApiLevel}")
+  message("-------------------------------------------")
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules)
 include(port_utils)

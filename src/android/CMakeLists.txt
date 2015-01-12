@@ -5,8 +5,6 @@ endif()
 
 project(android)
 
-include(../../cmake_modules/standard_setup.cmake)
-
 set(OutputPath "${CMAKE_BINARY_DIR}/android")
 
 configure_file("${android_SOURCE_DIR}/interface.i.in" "${OutputPath}/swig/interface.i")
@@ -26,6 +24,8 @@ target_compile_options(android_port PRIVATE -fno-strict-aliasing)
 ms_underscores_to_camel_case(android_port CamelCaseLibName)
 set_target_properties(android_port PROPERTIES PROJECT_LABEL ${CamelCaseLibName} FOLDER "Android")
 set_target_output_path(android_port "${OutputPath}")
+
+set_source_files_properties(${AndroidInterfaceFile} PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
 
 if(ANDROID_SKIP_SAMPLE)
   message("-- Skipping target android_sample")
@@ -122,6 +122,9 @@ add_custom_target(android_sample
             ${OutputPath}/class/src/org/maidsafe
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         $<TARGET_FILE:android_port>
+        ${OutputPath}/class/libs/armeabi-v7a
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${ANDROID_NDK_TOOLCHAIN_ROOT}/arm-linux-androideabi/lib/armv7-a/libcrystax.so
         ${OutputPath}/class/libs/armeabi-v7a
     COMMAND ${AntTool} debug > ${OutputPath}/ant-output.log
     COMMAND echo '\\nBuild Success'

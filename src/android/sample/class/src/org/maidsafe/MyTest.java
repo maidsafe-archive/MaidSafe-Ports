@@ -85,6 +85,7 @@ public class MyTest extends Activity
 
     /** static constructor */
     static {
+        System.loadLibrary("crystax");
         System.loadLibrary("android_port");
     }
 }
