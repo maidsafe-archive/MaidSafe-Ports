@@ -1,4 +1,4 @@
-PortSample
+MaidSafe-Ports
 ==========
 
-sample c++ lib to use for port tests
+Project to expose the MaidSafe Libs (API Project) to other programming languages.
