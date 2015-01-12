@@ -43,7 +43,9 @@ if(MSVC)
 endif()
 set_target_output_path(python_port "${OutputPath}")
 
-set_source_files_properties(${PythonInterfaceFile} PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
+if(UNIX)
+  set_source_files_properties(${PythonInterfaceFile} PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
+endif()
 
 add_custom_target(python_sample
                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:python_port>" "${OutputPath}"
