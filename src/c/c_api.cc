@@ -81,10 +81,8 @@ char* PrintMe(HTestClass* handle) {
   char* c_message{nullptr};
   try {
     auto message(CAST_FRM_HANDLE(handle)->PrintMe());
-    c_message = static_cast<char*>(operator new(message.size() + 1, std::nothrow));
-    if (c_message) {
-      std::strcpy(c_message, message.c_str());
-    }
+    c_message = static_cast<char*>(operator new(message.size() + 1));
+    std::strcpy(c_message, message.c_str());
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;
   } catch (...) {
@@ -119,10 +117,8 @@ char* GetHttpMessage(HTestClass* handle, const char* host, const char* service) 
   char* c_message{nullptr};
   try {
     auto message(CAST_FRM_HANDLE(handle)->GetHttpMessage(std::string{host}, std::string{service}));
-    c_message = static_cast<char*>(operator new(message.size() + 1, std::nothrow));
-    if (c_message) {
-      std::strcpy(c_message, message.c_str());
-    }
+    c_message = static_cast<char*>(operator new(message.size() + 1));
+    std::strcpy(c_message, message.c_str());
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;
   } catch (...) {

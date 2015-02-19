@@ -9,7 +9,6 @@ add_library(cpp_wrapper
  STATIC
   "${common_SOURCE_DIR}/api.cc"
   "${common_SOURCE_DIR}/api.h")
-set_source_files_properties("${common_SOURCE_DIR}/api.cc" PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
 
 target_link_libraries(cpp_wrapper maidsafe_rudp)
 

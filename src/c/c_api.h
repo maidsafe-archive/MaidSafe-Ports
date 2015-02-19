@@ -7,12 +7,8 @@ extern "C" {
 #include <stdbool.h>
 #endif
 
-#ifdef USE_VOID_HANDLE
-#   ifdef __cplusplus
-      using HTestClass = void;
-#   else
-      typedef void HTestClass;
-#   endif
+#ifdef USE_ONLY_VOID_HANDLE
+    typedef void HTestClass;
 #else
     struct HTestClass;
 #   ifndef __cplusplus
