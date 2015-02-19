@@ -27,10 +27,10 @@ void InitialiseLogging(HTestClass* handle);
 void SetValue(HTestClass* handle, int number);
 int GetValue(HTestClass* handle);
 int GetRandomUInt32(HTestClass* handle);
-const char* PrintMe(HTestClass* handle);
+char* PrintMe(HTestClass* handle);
 bool CheckBootstrapsConnectivity(HTestClass* handle);
 void PrintLogMessage(HTestClass* handle);
-const char* GetHttpMessage(HTestClass* handle, const char* host, const char* service);
+char* GetHttpMessage(HTestClass* handle, const char* host, const char* service);
 
 void FreeScalarResource(void* scalar_resource);
 void FreeVectorResource(void* vector_resource);

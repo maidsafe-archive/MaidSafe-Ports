@@ -29,7 +29,7 @@ if(ANDROID_BUILD)
   endif()
   set(SubModules ${SubModules} android)
 else()
-  set(SubModules ${SubModules} c_wrapper csharp nodejs python)
+  set(SubModules ${SubModules} c csharp nodejs python)
 endif()
 
 foreach(SubModule ${SubModules})

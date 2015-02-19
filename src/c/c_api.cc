@@ -35,35 +35,34 @@ void FreeTestClass(HTestClass* handle) {
 
 void InitialiseLogging(HTestClass* handle) {
   try {
-    delete CAST_FRM_HANDLE(handle);
+    CAST_FRM_HANDLE(handle)->InitialiseLogging();
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;
   } catch (...) {
     std::cerr << "Unknown Exception" << std::endl;
   }
-  CAST_FRM_HANDLE(handle)->InitialiseLogging();
 }
 
 void SetValue(HTestClass* handle, int number) {
   try {
-    delete CAST_FRM_HANDLE(handle);
+    CAST_FRM_HANDLE(handle)->SetMyValue(number);
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;
   } catch (...) {
     std::cerr << "Unknown Exception" << std::endl;
   }
-  CAST_FRM_HANDLE(handle)->SetMyValue(number);
 }
 
 int GetValue(HTestClass* handle) {
+  int ret_val{};
   try {
-    delete CAST_FRM_HANDLE(handle);
+    ret_val = CAST_FRM_HANDLE(handle)->GetMyValue();
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << std::endl;
   } catch (...) {
     std::cerr << "Unknown Exception" << std::endl;
   }
-  return CAST_FRM_HANDLE(handle)->GetMyValue();
+  return ret_val;
 }
 
 int GetRandomUInt32(HTestClass* handle) {
@@ -78,7 +77,7 @@ int GetRandomUInt32(HTestClass* handle) {
   return ret_val;
 }
 
-const char* PrintMe(HTestClass* handle) {
+char* PrintMe(HTestClass* handle) {
   char* c_message{nullptr};
   try {
     auto message(CAST_FRM_HANDLE(handle)->PrintMe());
@@ -116,7 +115,7 @@ void PrintLogMessage(HTestClass* handle) {
   }
 }
 
-const char* GetHttpMessage(HTestClass* handle, const char* host, const char* service) {
+char* GetHttpMessage(HTestClass* handle, const char* host, const char* service) {
   char* c_message{nullptr};
   try {
     auto message(CAST_FRM_HANDLE(handle)->GetHttpMessage(std::string{host}, std::string{service}));
