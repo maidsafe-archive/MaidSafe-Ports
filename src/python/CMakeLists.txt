@@ -5,9 +5,9 @@ endif()
 
 project(python)
 
-find_package(PythonLibs REQUIRED)
+find_package(PythonLibs)
 if(NOT PYTHONLIBS_FOUND)
-  set(ErrorMessage "\nMissing Python Libs.  ")
+  set(ErrorMessage "\nMissing Python Libs.\n")
   set(ErrorMessage "${ErrorMessage}-- Skipping target python_port\n")
   set(ErrorMessage "${ErrorMessage}-- Skipping target python_sample\n")
   message("${ErrorMessage}")

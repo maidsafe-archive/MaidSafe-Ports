@@ -24,13 +24,7 @@ HTestClass* CreateTestClass() {
 }
 
 void FreeTestClass(HTestClass* handle) {
-  try {
-    delete CAST_FRM_HANDLE(handle);
-  } catch (std::exception& e) {
-    std::cerr << "Exception: " << e.what() << std::endl;
-  } catch (...) {
-    std::cerr << "Unknown Exception" << std::endl;
-  }
+  delete CAST_FRM_HANDLE(handle);
 }
 
 void InitialiseLogging(HTestClass* handle) {
